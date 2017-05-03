@@ -16,18 +16,18 @@ module.exports = function(app) {
     app.route(BASE_URL_V1 + '/create')
         .post(courseService.createCourseAPI);
 
-    app.route(BASE_URL_V1 + '/update')
-        .post(courseService.updateCourse);
+    app.route(BASE_URL_V1 + '/update/:contentId')
+        .patch(courseService.updateCourseAPI);
 
-    app.route(BASE_URL_V1 + '/review')
-        .post(courseService.reviewCourse);
+    app.route(BASE_URL_V1 + '/review/:contentId')
+        .post(courseService.reviewCourseAPI);
 
-    app.route(BASE_URL_V1 + '/publish')
-        .post(courseService.publishCourse);
+    app.route(BASE_URL_V1 + '/publish/:contentId')
+        .get(courseService.publishCourseAPI);
 
-    app.route(BASE_URL_V1 + 'toc')
-        .get(courseService.getAllTOC);
+    app.route(BASE_URL_V1 + '/toc')
+        .get(courseService.getAllTOCAPI);
 
     app.route(BASE_URL_V1 + '/toc/id')
-        .post(courseService.getMyTOC);
+        .post(courseService.getMyTOCAPI);
 };

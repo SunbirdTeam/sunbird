@@ -48,13 +48,87 @@ function searchCourse(data, callback) {
 
 
 /**
+ * update metadata of the course
+ * @param {object} data
+ * @param {function} callback
+ * @returns {callback} with error or response
+ */
+
+function updateCourse(data, callback) {
+
+    restClient.performUpdateContent(data, function (err, res) {
+        //After check response, we perform other operation
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, res);
+        }
+    });
+}
+
+/**
+ * review the course
+ * @param {object} data
+ * @param {function} callback
+ * @returns {callback} with error or response
+ */
+
+function reviewCourse(data, callback) {
+
+    restClient.performReviewContent(data, function (err, res) {
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, res);
+        }
+    });
+}
+
+/**
+ * publish the course
+ * @param {object} data
+ * @param {function} callback
+ * @returns {callback} with error or response
+ */
+
+function publishCourse(data, callback) {
+
+    restClient.performPublishContent(data, function (err, res) {
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, res);
+        }
+    });
+}
+
+/**
+ * get All the course
+ * @param {object} data
+ * @param {function} callback
+ * @returns {callback} with error or response
+ */
+
+function getAllTOC(data, callback) {
+
+    restClient.performGetContent(data, function (err, res) {
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, res);
+        }
+    });
+}
+
+
+/**
  * Wrapper function to search function
  * @param {object} req
  * @param {object} res
  */
 function searchCourseAPI(req, res) {
 
-    var data = req.body.request;
+    var data = req.body;
 
     searchCourse(data, function (error, data) {
 
@@ -74,7 +148,7 @@ function searchCourseAPI(req, res) {
  */
 function createCourseAPI(req, res) {
 
-    var data = req.body.request;
+    var data = req.body;
 
     createCourse(data, function (error, data) {
 
@@ -87,37 +161,96 @@ function createCourseAPI(req, res) {
 }
 
 
-function updateCourse(req, res) {
+function updateCourseAPI(req, res) {
 
+    var data = req.body;
+    data.contentId = req.params.contentId;
+
+    updateCourse(data, function (error, data) {
+
+        if (error) {
+            return res.send(error);
+        } else {
+            return res.send(data);
+        }
+    });
+}
+
+function reviewCourseAPI(req, res) {
+    
+    var data = {};
+    data.contentId = req.params.contentId;
+
+    reviewCourse(data, function (error, data) {
+
+        if (error) {
+            return res.send(error);
+        } else {
+            return res.send(data);
+        }
+    });
 }
 
 
-function reviewCourse(req, res) {
+function publishCourseAPI(req, res) {
+    
+    var data = {};
+    data.contentId = req.params.contentId;
+
+    publishCourse(data, function (error, data) {
+
+        if (error) {
+            return res.send(error);
+        } else {
+            return res.send(data);
+        }
+    });
 
 }
 
+function getAllTOCAPI(req, res) {
+    
+    var data = {};
+    data.contentId = req.params.contentId;
 
-function publishCourse(req, res) {
+    getAllTOC(data, function (error, data) {
 
+        if (error) {
+            return res.send(error);
+        } else {
+            return res.send(data);
+        }
+    });
 }
 
-function getAllTOC(req, res) {
+function getMyTOCAPI(req, res) {
+    
+    var data = req.body;
 
+    searchCourse(data, function (error, data) {
+
+        if (error) {
+            return res.send(error);
+        } else {
+            return res.send(data);
+        }
+    });
 }
 
-function getMyTOC(req, res) {
 
-}
-
-
-module.exports.searchCourseAPI = searchCourseAPI;
-module.exports.createCourseAPI = createCourseAPI;
-module.exports.updateCourse = updateCourse;
-module.exports.reviewCourse = reviewCourse;
-module.exports.publishCourse = publishCourse;
-module.exports.getAllTOC = getAllTOC;
-module.exports.getMyTOC = getMyTOC;
+module.exports.searchCourseAPI  = searchCourseAPI;
+module.exports.createCourseAPI  = createCourseAPI;
+module.exports.updateCourseAPI  = updateCourseAPI;
+module.exports.reviewCourseAPI  = reviewCourseAPI;
+module.exports.publishCourseAPI = publishCourseAPI;
+module.exports.getAllTOCAPI     = getAllTOCAPI;
+module.exports.getMyTOCAPI      = getMyTOCAPI;
 
 //fot test purpose
-module.exports.createCourse = createCourse;
-module.exports.searchCourse = searchCourse;
+module.exports.createCourse     = createCourse;
+module.exports.searchCourse     = searchCourse;
+module.exports.updateCourse     = updateCourse;
+module.exports.reviewCourse     = reviewCourse;
+module.exports.publishCourse    = publishCourse;
+module.exports.getAllTOC        = getAllTOC;
+//module.exports.getMyTOC         = getMyTOC;

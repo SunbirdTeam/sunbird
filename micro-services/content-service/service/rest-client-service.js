@@ -15,22 +15,6 @@ function getHeaders() {
     return headers;
 }
 
-
-function performGetContent(endPoint, cb) {
-
-    var args = {
-        headers: getHeaders()
-    };
-
-    var host = getBaseUrl() + '/' + endPoint;
-    client.get(host, args, function (data, response) {
-        return cb(data);
-    });
-
-}
-
-
-
 function performCreateContent(data, cb) {
 
     var args = {
@@ -65,7 +49,76 @@ function performSearchContent(data, cb) {
     });
 }
 
+function performUpdateContent(data, cb) {
 
-module.exports.performGetContent    = performGetContent;
-module.exports.performSearchContent = performSearchContent;
-module.exports.performCreateContent = performCreateContent;
+    var args = {
+        headers: getHeaders(),
+        data: data
+    };
+
+    var host = getBaseUrl() + '/' + 'learning/v2/content/' + data.contentId;
+    client.patch(host, args, function (data, response) {
+        if (!data) {
+            cb(true, null);
+        } else {
+            cb(null, data);
+        }
+    });
+}
+
+function performReviewContent(data, cb) {
+
+    var args = {
+        headers: getHeaders(),
+        data: data
+    };
+
+    var host = getBaseUrl() + '/' + 'learning/v3/content/review/' + data.contentId;
+    client.post(host, args, function (data, response) {
+        if (!data) {
+            cb(true, null);
+        } else {
+            cb(null, data);
+        }
+    });
+}
+
+function performPublishContent(data, cb) {
+
+    var args = {
+        headers: getHeaders()
+    };
+
+    var host = getBaseUrl() + '/' + 'learning/v2/content/publish/' + data.contentId;
+    client.get(host, args, function (data, response) {
+        if (!data) {
+            cb(true, null);
+        } else {
+            cb(null, data);
+        }
+    });
+}
+
+function performGetContent(data, cb) {
+
+    var args = {
+        headers: getHeaders()
+    };
+
+    var host = getBaseUrl() + '/' + 'learning/v2/content/' + data.contentId;
+    client.get(host, args, function (data, response) {
+        if (!data) {
+            cb(true, null);
+        } else {
+            cb(null, data);
+        }
+    });
+}
+
+
+module.exports.performSearchContent     = performSearchContent;
+module.exports.performCreateContent     = performCreateContent;
+module.exports.performUpdateContent     = performUpdateContent;
+module.exports.performReviewContent     = performReviewContent;
+module.exports.performPublishContent    = performPublishContent;
+module.exports.performGetContent        = performGetContent;
