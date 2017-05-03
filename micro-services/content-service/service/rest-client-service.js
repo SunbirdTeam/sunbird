@@ -16,7 +16,7 @@ function getHeaders() {
 }
 
 
-function performGetRequest(endPoint, cb) {
+function performGetContent(endPoint, cb) {
 
     var args = {
         headers: getHeaders()
@@ -29,6 +29,8 @@ function performGetRequest(endPoint, cb) {
 
 }
 
+
+
 function performCreateContent(data, cb) {
 
     var args = {
@@ -38,10 +40,32 @@ function performCreateContent(data, cb) {
 
     var host = getBaseUrl() + '/' + 'learning/v2/content';
     client.post(host, args, function (data, response) {
-        return cb(data);
+        if (!data) {
+            cb(true, null);
+        } else {
+            cb(null, data);
+        }
+    });
+}
+
+function performSearchContent(data, cb) {
+
+    var args = {
+        headers: getHeaders(),
+        data: data
+    };
+
+    var host = getBaseUrl() + '/' + 'search/v2/search';
+    client.post(host, args, function (data, response) {
+        if (!data) {
+            cb(true, null);
+        } else {
+            cb(null, data);
+        }
     });
 }
 
 
-module.exports.performGetRequest = performGetRequest;
+module.exports.performGetContent    = performGetContent;
+module.exports.performSearchContent = performSearchContent;
 module.exports.performCreateContent = performCreateContent;
