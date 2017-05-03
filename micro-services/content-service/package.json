@@ -1,0 +1,11 @@
+{
+  "name": "content-service",
+  "version": "1.0.0",
+  "description": "This service used to perform CRUD operations on content",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Harish Kumar Gangula",
+  "license": "ISC"
+}

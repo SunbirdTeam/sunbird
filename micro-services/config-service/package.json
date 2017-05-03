@@ -1,0 +1,11 @@
+{
+  "name": "config-service",
+  "version": "1.0.0",
+  "description": "This service provides the config for the services to add and access the configurations",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Harish Kumar Gangula",
+  "license": "ISC"
+}
