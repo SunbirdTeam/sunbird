@@ -9,6 +9,7 @@
   "author": "Harish Kumar Gangula",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.4.0",
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
     "https": "^1.0.0",
