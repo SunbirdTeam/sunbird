@@ -53,34 +53,34 @@ function createCourse(data, callback) {
     }
 
     if (!checkRequiredKey(data, 'request')) {
-        rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_INVALID_OBJECT;
+        rspObj.errCode = respUtil.ERROR_CODE.COURSE_CREATE_INVALID_OBJECT;
         rspObj.errMsg = respUtil.ERROR_MESSAGE.INVALID_REQUEST;
-        rspObj.responseCode = respUtil.ERROR_CODE.CLIENT_ERROR;
+        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
         return callback(respUtil.errorResponse(rspObj), null);
     }
 
     if (!checkRequiredKey(data.request, 'course')) {
-        rrspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_INVALID_OBJECT;
+        rrspObj.errCode = respUtil.ERROR_CODE.COURSE_CREATE_INVALID_OBJECT;
         rspObj.errMsg = respUtil.ERROR_MESSAGE.INVALID_REQUEST;
-        rspObj.responseCode = respUtil.ERROR_CODE.CLIENT_ERROR;
+        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
         return callback(respUtil.errorResponse(rspObj), null);
     }
 
     if (!checkRequiredKey(data.request.course, 'name')) {
         rspObj.result.messages = [];
         rspObj.result.messages.push(respUtil.GENERIC_MESSAGE.NAME_FIELD_REQUIRED);
-        rspObj.errCode = respUtil.ERROR_CODE.SAVE_COURSE_FAILED;
+        rspObj.errCode = respUtil.ERROR_CODE.COURSE_CREATE_INVALID_OBJECT;
         rspObj.errMsg = respUtil.ERROR_MESSAGE.VALIDATION_ERROR;
-        rspObj.responseCode = respUtil.ERROR_CODE.CLIENT_ERROR;
+        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
         return callback(respUtil.errorResponse(rspObj), null);
     }
 
     if (!checkRequiredKey(data.request.course, 'description')) {
         rspObj.result.messages = [];
         rspObj.result.messages.push(respUtil.GENERIC_MESSAGE.DESCRIPTION_FIELD_REQUIRED);
-        rspObj.errCode = respUtil.ERROR_CODE.SAVE_COURSE_FAILED;
+        rspObj.errCode = respUtil.ERROR_CODE.COURSE_CREATE_INVALID_OBJECT;
         rspObj.errMsg = respUtil.ERROR_MESSAGE.VALIDATION_ERROR;
-        rspObj.responseCode = respUtil.ERROR_CODE.CLIENT_ERROR;
+        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
         return callback(respUtil.errorResponse(rspObj), null);
     }
 
@@ -99,7 +99,7 @@ function createCourse(data, callback) {
                 if (err) {
                     rspObj.result.messages = [];
                     rspObj.result.messages.push(err.result.messages);
-                    rspObj.errCode = respUtil.ERROR_CODE.SAVE_COURSE_FAILED;
+                    rspObj.errCode = respUtil.ERROR_CODE.COURSE_CREATE_FAILED;
                     rspObj.errMsg = respUtil.ERROR_MESSAGE.EKSTEP_ERROR;
                     rspObj.responseCode = err.responseCode;
                     return callback(respUtil.errorResponse(rspObj), null);
@@ -111,7 +111,7 @@ function createCourse(data, callback) {
         function(res) {
             rspObj.result.node_id = res.result.node_id;
             rspObj.result.versionKey = res.result.versionKey;
-            return callback(respUtil.successResponse(rspObj), null);
+            return callback(null, respUtil.successResponse(rspObj));
         }
 
     ]);
@@ -126,14 +126,48 @@ function createCourse(data, callback) {
  */
 function searchCourse(data, callback) {
 
-    restClient.performSearchContent(data, function(err, res) {
-        //After check response, we perform other operation
-        if (err) {
-            callback(err, null);
-        } else {
-            callback(null, res);
+    var rspObj = {
+        id: data.apiId,
+        version: data.apiVersion,
+        msgId: null,
+        result: {}
+    }
+
+    if (!checkRequiredKey(data, 'request')) {
+        rspObj.errCode = respUtil.ERROR_CODE.COURSE_SEARCH_INVALID_OBJECT;
+        rspObj.errMsg = respUtil.ERROR_MESSAGE.INVALID_REQUEST;
+        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
+        return callback(respUtil.errorResponse(rspObj), null);
+    }
+    if (!checkRequiredKey(data.request, 'filters')) {
+        rspObj.errCode = respUtil.ERROR_CODE.COURSE_SEARCH_INVALID_OBJECT;
+        rspObj.errMsg = respUtil.ERROR_MESSAGE.INVALID_REQUEST;
+        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
+        return callback(respUtil.errorResponse(rspObj), null);
+    }
+
+    async.waterfall([
+
+        function(CBW) {
+            restClient.performSearchContent(data, function(err, res) {
+                if (err) {
+                    rspObj.result.messages = [];
+                    rspObj.result.messages.push(err.result.messages);
+                    rspObj.errCode = respUtil.ERROR_CODE.COURSE_SEARCH_FAILED;
+                    rspObj.errMsg = respUtil.ERROR_MESSAGE.EKSTEP_ERROR;
+                    rspObj.responseCode = err.responseCode;
+                    return callback(respUtil.errorResponse(rspObj), null);
+                } else {
+                    CBW(null, res);
+                }
+            });
+        },
+
+        function(res) {
+            rspObj.result = res.result;
+            return callback(null, respUtil.successResponse(rspObj));
         }
-    });
+    ]);
 }
 
 
@@ -219,6 +253,8 @@ function getAllTOC(data, callback) {
 function searchCourseAPI(req, res) {
 
     var data = req.body;
+    data.apiId = 'sunbird.course.search';
+    data.apiVersion = '1.0';
 
     searchCourse(data, function(error, data) {
 
