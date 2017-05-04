@@ -35,33 +35,53 @@ function getParams(msgId, errCode, status, msg) {
     params.err = errCode;
     params.status = status;
     params.errmsg = msg;
-    
+
     return params;
 }
 
 function generateUUID() {
-    return uuidV1();  
+    return uuidV1();
 }
 
 
 exports.ERROR_CODE = {
-    ERR_COURSE_REQ_FIELDS_MISSING : "ERR_COURSE_REQ_FIELDS_MISSING",
-    ERR_COURSE_SEARCH_FIELDS_MISSING : "ERR_COURSE_SEARCH_FIELDS_MISSING",
-    ERR_COURSE_UPDATE_FIELDS_MISSING : "ERR_COURSE_UPDATE_FIELDS_MISSING"
+    ERR_COURSE_REQ_FIELDS_MISSING: "ERR_COURSE_REQ_FIELDS_MISSING",
+    ERR_COURSE_REQ_FAILED: "ERR_COURSE_REQ_FAILED",
+
+    ERR_COURSE_SEARCH_FIELDS_MISSING: "ERR_COURSE_SEARCH_FIELDS_MISSING",
+    ERR_COURSE_SEARCH_FAILED: "ERR_COURSE_SEARCH_FAILED",
+
+    ERR_COURSE_UPDATE_FIELDS_MISSING: "ERR_COURSE_UPDATE_FIELDS_MISSING",
+    ERR_COURSE_UPDATE_FAILED: "ERR_COURSE_UPDATE_FAILED",
+
+    ERR_COURSE_REVIEW_FAILED: "ERR_COURSE_REVIEW_FAILED",
+
+    ERR_COURSE_PUBLISH_FAILED: "ERR_COURSE_PUBLISH_FAILED"
 };
 
 exports.ERROR_MESSAGE = {
-    ERR_COURSE_REQ_FIELDS_MISSING : "Required fields for course are missing",
-    ERR_COURSE_SEARCH_FIELDS_MISSING : "Required fields for search course are missing",
-    ERR_COURSE_UPDATE_FIELDS_MISSING : "Required fields for update course are missing"
+    ERR_COURSE_REQ_FIELDS_MISSING: "Required fields for course are missing",
+    ERR_COURSE_REQ_FAILED: "Create course failed",
+
+    ERR_COURSE_SEARCH_FIELDS_MISSING: "Required fields for search course are missing",
+    ERR_COURSE_SEARCH_FAILED: "Search course failed",
+
+    ERR_COURSE_UPDATE_FIELDS_MISSING: "Required fields for update course are missing",
+    ERR_COURSE_UPDATE_FAILED: "Update course failed",
+
+    ERR_COURSE_REVIEW_FAILED: "Review course failed",
+
+    ERR_COURSE_PUBLISH_FAILED: "Publish course failed"
+
 };
 
 exports.RESPONSE_CODE = {
-    CLIENT_ERROR : "CLIENT_ERROR"
+    CLIENT_ERROR: "CLIENT_ERROR",
+    SERVER_ERROR: "SERVER_ERROR"
 };
 
 exports.GENERIC_MESSAGE = {
-    REQUIRED_FIELD_NOT_FOUND : "Required Metadata not set"
+    REQUIRED_FIELD_NOT_FOUND: "Required Metadata not set"
 };
 
 
