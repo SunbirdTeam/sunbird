@@ -1,0 +1,38 @@
+/**
+ * index
+ * 
+ * @module      ::js-utils
+ * @description :: Represent utility functions for config requests and acts as entry file for config utility package
+ * @author      :: Loganathan
+ */
+
+
+
+
+
+
+getConfig = function (configuration_name) {
+    var config_data = {
+
+        EKSTEP_SEARCH_API_URL: "https://dev.ekstep.in/api/search",
+        EKSTEP_LEARNING_API_URL: "https://dev.ekstep.in/api/learning",
+        EKSTEP_CREATE_CONTENT_URI: "/v2/content",
+        EKSTEP_SEARCH_CONTENT_URI: "/v2/content/search",
+        EKSTEP_UPDATE_CONTENT_URI: "/v2/content",
+        EKSTEP_GET_CONTENT_URI: "/v2/content",
+        EKSTEP_REVIEW_CONTENT_URI: "/v2/content/review",
+        EKSTEP_PUBLISH_CONTENT_URI: "/v2/content/publish/",
+        EKSTEP_LIST_CONTENT_URI: "/v2/content/list",
+        EKSTEP_RETIRE_CONTENT_URI: "/v2/content"
+
+    };
+    return config_data[configuration_name];
+}
+
+
+module.exports = {
+    getConfig: getConfig
+};
+
+
+

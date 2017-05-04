@@ -1,0 +1,11 @@
+{
+  "name": "sb-ekstep-util",
+  "version": "1.0.0",
+  "description": "this package server utility functions needed to communicate with ekstep api's",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "loganathan",
+  "license": "ISC"
+}
