@@ -2,8 +2,9 @@ var restClient = require('./restClientService');
 var respUtil = require('./responseUtil.js');
 var async = require('async');
 var randomString = require('randomstring');
+var ekStepUtils = require('sb-ekstep-util');
 
-function transformRequestBody(body, oldKey, newKey) {
+function transformReqResBody(body, oldKey, newKey) {
     var ekStepData = {
         request: {}
     };
@@ -65,16 +66,14 @@ function createCourse(data, callback) {
     data.request.course.mimeType = getMimeType();
     data.request.course.contentType = getContentType();
 
-    var ekStepData = transformRequestBody(data.request, 'course', 'content');
+    var ekStepData = transformReqResBody(data.request, 'course', 'content');
 
     async.waterfall([
 
         function(CBW) {
-            restClient.performCreateContent(ekStepData, function(err, res) {
+            ekStepUtils.createContent(ekStepData, function(err, res) {
                 //After check response, we perform other operation
-                if (err) {
-                    rspObj.result.messages = [];
-                    rspObj.result.messages.push(err.result.messages);
+                if (err || res.responseCode !== "OK") {
                     rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_REQ_FAILED;
                     rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_REQ_FAILED;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
@@ -119,10 +118,8 @@ function searchCourse(data, callback) {
     async.waterfall([
 
         function(CBW) {
-            restClient.performSearchContent(data, function(err, res) {
-                if (err) {
-                    rspObj.result.messages = [];
-                    rspObj.result.messages.push(err.result.messages);
+            ekStepUtils.searchContent(data, function(err, res) {
+                if (err || res.responseCode !== "OK") {
                     rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_SEARCH_FAILED;
                     rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_SEARCH_FAILED;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
@@ -165,19 +162,17 @@ function updateCourse(data, callback) {
     }
 
     //Tranform request for Ekstep
-    data.request.course.mimeType = getMimeType();
-    data.request.course.contentType = getContentType();
+    delete data.request.course['mimeType'];
+    delete data.request.course['contentType'];
 
-    var ekStepData = transformRequestBody(data.request, 'course', 'content');
+    var ekStepData = transformReqResBody(data.request, 'course', 'content');
 
     async.waterfall([
 
         function(CBW) {
-            restClient.performUpdateContent(ekStepData, function(err, res) {
+            ekStepUtils.updateContent(ekStepData, ekStepData.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err) {
-                    rspObj.result.messages = [];
-                    rspObj.result.messages.push(err.result.messages);
+                if (err || res.responseCode !== "OK") {
                     rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_UPDATE_FAILED;
                     rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_UPDATE_FAILED;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
@@ -215,11 +210,9 @@ function reviewCourse(data, callback) {
     async.waterfall([
 
         function(CBW) {
-            restClient.performReviewContent(data, function(err, res) {
+            ekStepUtils.reviewContent(data.body, data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err) {
-                    rspObj.result.messages = [];
-                    rspObj.result.messages.push(err.result.messages);
+                if (err || res.responseCode !== "OK") {
                     rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_REVIEW_FAILED;
                     rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_REVIEW_FAILED;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
@@ -257,11 +250,9 @@ function publishCourse(data, callback) {
     async.waterfall([
 
         function(CBW) {
-            restClient.performPublishContent(data, function(err, res) {
+            ekStepUtils.publishContent(data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err) {
-                    rspObj.result.messages = [];
-                    rspObj.result.messages.push(err.result.messages);
+                if (err || res.responseCode !== "OK") {
                     rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_PUBLISH_FAILED;
                     rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_PUBLISH_FAILED;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
@@ -290,13 +281,33 @@ function publishCourse(data, callback) {
 
 function getAllTOC(data, callback) {
 
-    restClient.performGetContent(data, function(err, res) {
-        if (err) {
-            callback(err, null);
-        } else {
-            callback(null, res);
+    var rspObj = {
+        id: data.apiId,
+        version: data.apiVersion,
+        msgId: null,
+        result: {}
+    };
+    async.waterfall([
+
+        function(CBW) {
+            ekStepUtils.getContent(data.contentId, function(err, res) {
+                //After check response, we perform other operation
+                if (err || res.responseCode !== "OK") {
+                    rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_GET_ALL_TOC_FAILED;
+                    rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_GET_ALL_TOC_FAILED;
+                    rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
+                    return callback(respUtil.errorResponse(rspObj), null);
+                } else {
+                    CBW(null, res);
+                }
+            });
+        },
+
+        function(res) {
+            rspObj.result = transformReqResBody(res.result, 'content', 'course');
+            return callback(null, respUtil.successResponse(rspObj));
         }
-    });
+    ]);
 }
 
 
@@ -363,7 +374,9 @@ function updateCourseAPI(req, res) {
 
 function reviewCourseAPI(req, res) {
 
-    var data = {};
+    var data = {
+        body: req.body
+    };
     data.contentId = req.params.contentId;
     data.apiId = 'sunbird.course.review';
     data.apiVersion = getApiVersion();
@@ -416,7 +429,14 @@ function getAllTOCAPI(req, res) {
 
 function getMyTOCAPI(req, res) {
 
-    var data = req.body;
+    var data = {
+        "request": {
+            "filters": {
+                // "createdBy": req.userId  
+                "createdBy": req.body.createdBy
+            }
+        }
+    };
     data.apiId = 'sunbird.course.getMyToc';
     data.apiVersion = getApiVersion();
 
