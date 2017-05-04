@@ -7,7 +7,7 @@ function transformRequestBody(body, oldKey, newKey) {
     var ekStepData = {
         request: {}
     };
-    for (key in body) {
+    for (var key in body) {
         if (key === oldKey) {
             ekStepData.request[newKey] = body[oldKey];
             return ekStepData;
@@ -47,7 +47,7 @@ function createCourse(data, callback) {
         version: data.apiVersion,
         msgId: null,
         result: {}
-    }
+    };
 
     if (!data.request || !data.request.course || !checkRequiredKey(data.request.course, ['name', 'description'])) {
         rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_REQ_FIELDS_MISSING;
@@ -61,7 +61,7 @@ function createCourse(data, callback) {
     data.request.course.mimeType = getMimeType();
     data.request.course.contentType = getContentType();
 
-    var ekStepData = transformRequestBody(data.request, 'course', 'content')
+    var ekStepData = transformRequestBody(data.request, 'course', 'content');
 
     async.waterfall([
 
@@ -103,7 +103,7 @@ function searchCourse(data, callback) {
         version: data.apiVersion,
         msgId: null,
         result: {}
-    }
+    };
 
     if (!data.request || !data.request.filters) {
         rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_SEARCH_FIELDS_MISSING;
@@ -151,7 +151,7 @@ function updateCourse(data, callback) {
         version: data.apiVersion,
         msgId: null,
         result: {}
-    }
+    };
 
     if (!data.request || !data.request.course || !checkRequiredKey(data.request.course, ['versionKey'])) {
         rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_UPDATE_FIELDS_MISSING;
@@ -164,12 +164,12 @@ function updateCourse(data, callback) {
     data.request.course.mimeType = getMimeType();
     data.request.course.contentType = getContentType();
 
-    var ekStepData = transformRequestBody(data.request, 'course', 'content')
+    var ekStepData = transformRequestBody(data.request, 'course', 'content');
 
     async.waterfall([
 
         function(CBW) {
-            restClient.performUpdateContent(data, function(err, res) {
+            restClient.performUpdateContent(ekStepData, function(err, res) {
                 //After check response, we perform other operation
                 if (err) {
                     rspObj.result.messages = [];
