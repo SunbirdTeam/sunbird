@@ -1,5 +1,41 @@
 var restClient = require('./restClientService');
+var respUtil = require('./responseUtil.js');
+var async = require('async');
+var randomString = require('randomstring');
 
+function transformRequestBody(body, oldKey, newKey) {
+    var ekStepData = {
+        request: {}
+    };
+    for (key in body) {
+        if (key === oldKey) {
+            ekStepData.request[newKey] = body[oldKey];
+            return ekStepData;
+        }
+    }
+}
+
+function checkRequiredKey(body, value) {
+
+    for (key in body) {
+        if (key === value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function getCode() {
+    return 'org.sunbird.' + randomString.generate(12);
+}
+
+function getMimeType() {
+    return "application/vnd.ekstep.content-collection";
+}
+
+function getContentType() {
+    return "Collection";
+}
 
 /**
  * This function first check all the required params, and then create course in ekstep, After that we store in cache
@@ -9,22 +45,76 @@ var restClient = require('./restClientService');
  */
 function createCourse(data, callback) {
 
-    var dataObj = data.request.content;
-
-    //We check all required parameters
-
-    if (!dataObj.name || !dataObj.description || !dataObj.code || !dataObj.mimeType) {
-        callback(true, null);
-    } else {
-        restClient.performCreateContent(data, function (err, res) {
-            //After check response, we perform other operation
-            if (err) {
-                callback(err, null);
-            } else {
-                callback(null, res);
-            }
-        });
+    var rspObj = {
+        id: data.apiId,
+        version: data.apiVersion,
+        msgId: null,
+        result: {}
     }
+
+    if (!checkRequiredKey(data, 'request')) {
+        rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_INVALID_OBJECT;
+        rspObj.errMsg = respUtil.ERROR_MESSAGE.INVALID_REQUEST;
+        rspObj.responseCode = respUtil.ERROR_CODE.CLIENT_ERROR;
+        return callback(respUtil.errorResponse(rspObj), null);
+    }
+
+    if (!checkRequiredKey(data.request, 'course')) {
+        rrspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_INVALID_OBJECT;
+        rspObj.errMsg = respUtil.ERROR_MESSAGE.INVALID_REQUEST;
+        rspObj.responseCode = respUtil.ERROR_CODE.CLIENT_ERROR;
+        return callback(respUtil.errorResponse(rspObj), null);
+    }
+
+    if (!checkRequiredKey(data.request.course, 'name')) {
+        rspObj.result.messages = [];
+        rspObj.result.messages.push(respUtil.GENERIC_MESSAGE.NAME_FIELD_REQUIRED);
+        rspObj.errCode = respUtil.ERROR_CODE.SAVE_COURSE_FAILED;
+        rspObj.errMsg = respUtil.ERROR_MESSAGE.VALIDATION_ERROR;
+        rspObj.responseCode = respUtil.ERROR_CODE.CLIENT_ERROR;
+        return callback(respUtil.errorResponse(rspObj), null);
+    }
+
+    if (!checkRequiredKey(data.request.course, 'description')) {
+        rspObj.result.messages = [];
+        rspObj.result.messages.push(respUtil.GENERIC_MESSAGE.DESCRIPTION_FIELD_REQUIRED);
+        rspObj.errCode = respUtil.ERROR_CODE.SAVE_COURSE_FAILED;
+        rspObj.errMsg = respUtil.ERROR_MESSAGE.VALIDATION_ERROR;
+        rspObj.responseCode = respUtil.ERROR_CODE.CLIENT_ERROR;
+        return callback(respUtil.errorResponse(rspObj), null);
+    }
+
+    //now tranform request for Ekstep
+    data.request.course.code = getCode();
+    data.request.course.mimeType = getMimeType();
+    data.request.course.contentType = getContentType();
+
+    var ekStepData = transformRequestBody(data.request, 'course', 'content')
+
+    async.waterfall([
+
+        function(CBW) {
+            restClient.performCreateContent(ekStepData, function(err, res) {
+                //After check response, we perform other operation
+                if (err) {
+                    rspObj.result.messages = [];
+                    rspObj.result.messages.push(err.result.messages);
+                    rspObj.errCode = respUtil.ERROR_CODE.SAVE_COURSE_FAILED;
+                    rspObj.errMsg = respUtil.ERROR_MESSAGE.EKSTEP_ERROR;
+                    rspObj.responseCode = err.responseCode;
+                    return callback(respUtil.errorResponse(rspObj), null);
+                } else {
+                    CBW(null, res);
+                }
+            });
+        },
+        function(res) {
+            rspObj.result.node_id = res.result.node_id;
+            rspObj.result.versionKey = res.result.versionKey;
+            return callback(respUtil.successResponse(rspObj), null);
+        }
+
+    ]);
 }
 
 
@@ -36,7 +126,7 @@ function createCourse(data, callback) {
  */
 function searchCourse(data, callback) {
 
-    restClient.performSearchContent(data, function (err, res) {
+    restClient.performSearchContent(data, function(err, res) {
         //After check response, we perform other operation
         if (err) {
             callback(err, null);
@@ -56,7 +146,7 @@ function searchCourse(data, callback) {
 
 function updateCourse(data, callback) {
 
-    restClient.performUpdateContent(data, function (err, res) {
+    restClient.performUpdateContent(data, function(err, res) {
         //After check response, we perform other operation
         if (err) {
             callback(err, null);
@@ -75,7 +165,7 @@ function updateCourse(data, callback) {
 
 function reviewCourse(data, callback) {
 
-    restClient.performReviewContent(data, function (err, res) {
+    restClient.performReviewContent(data, function(err, res) {
         if (err) {
             callback(err, null);
         } else {
@@ -93,7 +183,7 @@ function reviewCourse(data, callback) {
 
 function publishCourse(data, callback) {
 
-    restClient.performPublishContent(data, function (err, res) {
+    restClient.performPublishContent(data, function(err, res) {
         if (err) {
             callback(err, null);
         } else {
@@ -111,7 +201,7 @@ function publishCourse(data, callback) {
 
 function getAllTOC(data, callback) {
 
-    restClient.performGetContent(data, function (err, res) {
+    restClient.performGetContent(data, function(err, res) {
         if (err) {
             callback(err, null);
         } else {
@@ -130,7 +220,7 @@ function searchCourseAPI(req, res) {
 
     var data = req.body;
 
-    searchCourse(data, function (error, data) {
+    searchCourse(data, function(error, data) {
 
         if (error) {
             return res.send(error);
@@ -149,8 +239,10 @@ function searchCourseAPI(req, res) {
 function createCourseAPI(req, res) {
 
     var data = req.body;
+    data.apiId = 'sunbird.course.save';
+    data.apiVersion = '1.0';
 
-    createCourse(data, function (error, data) {
+    createCourse(data, function(error, data) {
 
         if (error) {
             return res.send(error);
@@ -166,7 +258,7 @@ function updateCourseAPI(req, res) {
     var data = req.body;
     data.contentId = req.params.contentId;
 
-    updateCourse(data, function (error, data) {
+    updateCourse(data, function(error, data) {
 
         if (error) {
             return res.send(error);
@@ -177,11 +269,11 @@ function updateCourseAPI(req, res) {
 }
 
 function reviewCourseAPI(req, res) {
-    
+
     var data = {};
     data.contentId = req.params.contentId;
 
-    reviewCourse(data, function (error, data) {
+    reviewCourse(data, function(error, data) {
 
         if (error) {
             return res.send(error);
@@ -193,11 +285,11 @@ function reviewCourseAPI(req, res) {
 
 
 function publishCourseAPI(req, res) {
-    
+
     var data = {};
     data.contentId = req.params.contentId;
 
-    publishCourse(data, function (error, data) {
+    publishCourse(data, function(error, data) {
 
         if (error) {
             return res.send(error);
@@ -209,11 +301,11 @@ function publishCourseAPI(req, res) {
 }
 
 function getAllTOCAPI(req, res) {
-    
+
     var data = {};
     data.contentId = req.params.contentId;
 
-    getAllTOC(data, function (error, data) {
+    getAllTOC(data, function(error, data) {
 
         if (error) {
             return res.send(error);
@@ -224,10 +316,10 @@ function getAllTOCAPI(req, res) {
 }
 
 function getMyTOCAPI(req, res) {
-    
+
     var data = req.body;
 
-    searchCourse(data, function (error, data) {
+    searchCourse(data, function(error, data) {
 
         if (error) {
             return res.send(error);
@@ -238,19 +330,19 @@ function getMyTOCAPI(req, res) {
 }
 
 
-module.exports.searchCourseAPI  = searchCourseAPI;
-module.exports.createCourseAPI  = createCourseAPI;
-module.exports.updateCourseAPI  = updateCourseAPI;
-module.exports.reviewCourseAPI  = reviewCourseAPI;
+module.exports.searchCourseAPI = searchCourseAPI;
+module.exports.createCourseAPI = createCourseAPI;
+module.exports.updateCourseAPI = updateCourseAPI;
+module.exports.reviewCourseAPI = reviewCourseAPI;
 module.exports.publishCourseAPI = publishCourseAPI;
-module.exports.getAllTOCAPI     = getAllTOCAPI;
-module.exports.getMyTOCAPI      = getMyTOCAPI;
+module.exports.getAllTOCAPI = getAllTOCAPI;
+module.exports.getMyTOCAPI = getMyTOCAPI;
 
 //fot test purpose
-module.exports.createCourse     = createCourse;
-module.exports.searchCourse     = searchCourse;
-module.exports.updateCourse     = updateCourse;
-module.exports.reviewCourse     = reviewCourse;
-module.exports.publishCourse    = publishCourse;
-module.exports.getAllTOC        = getAllTOC;
+module.exports.createCourse = createCourse;
+module.exports.searchCourse = searchCourse;
+module.exports.updateCourse = updateCourse;
+module.exports.reviewCourse = reviewCourse;
+module.exports.publishCourse = publishCourse;
+module.exports.getAllTOC = getAllTOC;
 //module.exports.getMyTOC         = getMyTOC;
