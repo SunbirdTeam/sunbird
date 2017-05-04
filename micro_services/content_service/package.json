@@ -4,7 +4,7 @@
   "description": "This service used to perform CRUD operations on content",
   "main": "app.js",
   "scripts": {
-    "test": "jasmine-node ."
+    "test": "karma start karma.conf.js"
   },
   "author": "Harish Kumar Gangula",
   "license": "ISC",
@@ -17,6 +17,20 @@
     "node-rest-client": "^3.1.0"
   },
   "devDependencies": {
-    "frisby": "^0.8.5"
+    "browserify": "^14.3.0",
+    "jasmine": "^2.6.0",
+    "jasmine-core": "^2.6.1",
+    "jasmine-expect": "^3.7.0",
+    "jasmine-node": "^1.14.5",
+    "karma": "^1.6.0",
+    "karma-browserify": "^5.1.1",
+    "karma-coverage": "^1.1.1",
+    "karma-jasmine": "^1.1.0",
+    "karma-jasmine-matchers": "^3.7.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "phantomjs": "^2.1.7",
+    "phantomjs-polyfill-object-assign": "0.0.2",
+    "request": "^2.81.0",
+    "watchify": "^3.9.0"
   }
 }

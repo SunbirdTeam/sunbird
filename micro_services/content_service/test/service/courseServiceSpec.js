@@ -1,18 +1,27 @@
-function runTest() {
+describe("Course services", function() {
+    var courseService  = require('../service/courseService');
+    var base_url = "http://localhost:5000/api/sb/v1/course"
+    it('should search the courses', function(done) {
+        request.post({
+            headers: { 'Content-Type': 'application/json' },
+            uri: base_url + '/search',
+            body: {
+                "request": {
+                    "filters": {},
+                    "offset": 0,
+                    "limit": 5
+                }
+            },
+            json: true
+        }, function(error, response, body) {
+            expect(response.statusCode).toBe(200);
+            expect(body).toBeDefined();
+            done();
+        });
+    });
 
-    var frisby = require('frisby');
-    var BASE_URL = "http://localhost:5000/api/sb/v1/course";
 
-    frisby.create('Get all the courses')
-        .post(BASE_URL + "/search", {
-            "request": {
-                "offset": 0,
-                "limit": 5
-            }
-        })
-        .expectStatus(200)
-        .toss();
-
-}
-
-runTest();
+    it('should search courses by createdBy', function() {
+        
+    });
+})
