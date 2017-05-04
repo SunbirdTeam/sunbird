@@ -1,7 +1,6 @@
 var httpUtil = require('sb-http-util');
 var configUtil = require('sb-config-util');
 createContent = function (data, cb) {
-
     var http_options = {
         url: configUtil.getConfig('EKSTEP_LEARNING_API_URL') + configUtil.getConfig('EKSTEP_CREATE_CONTENT_URI'),
         headers: {
