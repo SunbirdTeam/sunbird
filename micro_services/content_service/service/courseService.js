@@ -17,16 +17,13 @@ function transformRequestBody(body, oldKey, newKey) {
 
 function checkRequiredKey(body, value) {
 
-    for (key in body) {
-        if (key === value) {
-            return true;
-        }
-    }
-    return false;
+    return value.every(function(val) {
+        return val in body;
+    });
 }
 
 function getCode() {
-    return 'org.sunbird.' + randomString.generate(12);
+    return 'org.sunbird.' + randomString.generate(6);
 }
 
 function getMimeType() {
@@ -52,39 +49,14 @@ function createCourse(data, callback) {
         result: {}
     }
 
-    if (!checkRequiredKey(data, 'request')) {
-        rspObj.errCode = respUtil.ERROR_CODE.COURSE_CREATE_INVALID_OBJECT;
-        rspObj.errMsg = respUtil.ERROR_MESSAGE.INVALID_REQUEST;
+    if (!data.request || !data.request.course || !checkRequiredKey(data.request.course, ['name', 'description'])) {
+        rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_REQ_FIELDS_MISSING;
+        rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_REQ_FIELDS_MISSING;
         rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
         return callback(respUtil.errorResponse(rspObj), null);
     }
 
-    if (!checkRequiredKey(data.request, 'course')) {
-        rrspObj.errCode = respUtil.ERROR_CODE.COURSE_CREATE_INVALID_OBJECT;
-        rspObj.errMsg = respUtil.ERROR_MESSAGE.INVALID_REQUEST;
-        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
-        return callback(respUtil.errorResponse(rspObj), null);
-    }
-
-    if (!checkRequiredKey(data.request.course, 'name')) {
-        rspObj.result.messages = [];
-        rspObj.result.messages.push(respUtil.GENERIC_MESSAGE.NAME_FIELD_REQUIRED);
-        rspObj.errCode = respUtil.ERROR_CODE.COURSE_CREATE_INVALID_OBJECT;
-        rspObj.errMsg = respUtil.ERROR_MESSAGE.VALIDATION_ERROR;
-        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
-        return callback(respUtil.errorResponse(rspObj), null);
-    }
-
-    if (!checkRequiredKey(data.request.course, 'description')) {
-        rspObj.result.messages = [];
-        rspObj.result.messages.push(respUtil.GENERIC_MESSAGE.DESCRIPTION_FIELD_REQUIRED);
-        rspObj.errCode = respUtil.ERROR_CODE.COURSE_CREATE_INVALID_OBJECT;
-        rspObj.errMsg = respUtil.ERROR_MESSAGE.VALIDATION_ERROR;
-        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
-        return callback(respUtil.errorResponse(rspObj), null);
-    }
-
-    //now tranform request for Ekstep
+    //Tranform request for Ekstep
     data.request.course.code = getCode();
     data.request.course.mimeType = getMimeType();
     data.request.course.contentType = getContentType();
@@ -99,8 +71,8 @@ function createCourse(data, callback) {
                 if (err) {
                     rspObj.result.messages = [];
                     rspObj.result.messages.push(err.result.messages);
-                    rspObj.errCode = respUtil.ERROR_CODE.COURSE_CREATE_FAILED;
-                    rspObj.errMsg = respUtil.ERROR_MESSAGE.EKSTEP_ERROR;
+                    rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_REQ_FIELDS_MISSING;
+                    rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_REQ_FIELDS_MISSING;
                     rspObj.responseCode = err.responseCode;
                     return callback(respUtil.errorResponse(rspObj), null);
                 } else {
@@ -109,7 +81,7 @@ function createCourse(data, callback) {
             });
         },
         function(res) {
-            rspObj.result.node_id = res.result.node_id;
+            rspObj.result.course_id = res.result.node_id;
             rspObj.result.versionKey = res.result.versionKey;
             return callback(null, respUtil.successResponse(rspObj));
         }
@@ -133,15 +105,9 @@ function searchCourse(data, callback) {
         result: {}
     }
 
-    if (!checkRequiredKey(data, 'request')) {
-        rspObj.errCode = respUtil.ERROR_CODE.COURSE_SEARCH_INVALID_OBJECT;
-        rspObj.errMsg = respUtil.ERROR_MESSAGE.INVALID_REQUEST;
-        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
-        return callback(respUtil.errorResponse(rspObj), null);
-    }
-    if (!checkRequiredKey(data.request, 'filters')) {
-        rspObj.errCode = respUtil.ERROR_CODE.COURSE_SEARCH_INVALID_OBJECT;
-        rspObj.errMsg = respUtil.ERROR_MESSAGE.INVALID_REQUEST;
+    if (!data.request || !data.request.filters) {
+        rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_SEARCH_FIELDS_MISSING;
+        rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_SEARCH_FIELDS_MISSING;
         rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
         return callback(respUtil.errorResponse(rspObj), null);
     }
@@ -153,8 +119,8 @@ function searchCourse(data, callback) {
                 if (err) {
                     rspObj.result.messages = [];
                     rspObj.result.messages.push(err.result.messages);
-                    rspObj.errCode = respUtil.ERROR_CODE.COURSE_SEARCH_FAILED;
-                    rspObj.errMsg = respUtil.ERROR_MESSAGE.EKSTEP_ERROR;
+                    rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_SEARCH_FIELDS_MISSING;
+                    rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_SEARCH_FIELDS_MISSING;
                     rspObj.responseCode = err.responseCode;
                     return callback(respUtil.errorResponse(rspObj), null);
                 } else {
@@ -180,14 +146,50 @@ function searchCourse(data, callback) {
 
 function updateCourse(data, callback) {
 
-    restClient.performUpdateContent(data, function(err, res) {
-        //After check response, we perform other operation
-        if (err) {
-            callback(err, null);
-        } else {
-            callback(null, res);
+    var rspObj = {
+        id: data.apiId,
+        version: data.apiVersion,
+        msgId: null,
+        result: {}
+    }
+
+    if (!data.request || !data.request.course || !checkRequiredKey(data.request.course, ['versionKey'])) {
+        rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_UPDATE_FIELDS_MISSING;
+        rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_UPDATE_FIELDS_MISSING;
+        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
+        return callback(respUtil.errorResponse(rspObj), null);
+    }
+
+    //Tranform request for Ekstep
+    data.request.course.mimeType = getMimeType();
+    data.request.course.contentType = getContentType();
+
+    var ekStepData = transformRequestBody(data.request, 'course', 'content')
+
+    async.waterfall([
+
+        function(CBW) {
+            restClient.performUpdateContent(data, function(err, res) {
+                //After check response, we perform other operation
+                if (err) {
+                    rspObj.result.messages = [];
+                    rspObj.result.messages.push(err.result.messages);
+                    rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_UPDATE_FIELDS_MISSING;
+                    rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_UPDATE_FIELDS_MISSING;
+                    rspObj.responseCode = err.responseCode;
+                    return callback(respUtil.errorResponse(rspObj), null);
+                } else {
+                    CBW(null, res);
+                }
+            });
+        },
+
+        function(res) {
+            rspObj.result.course_id = res.result.node_id;
+            rspObj.result.versionKey = res.result.versionKey;
+            return callback(null, respUtil.successResponse(rspObj));
         }
-    });
+    ]);
 }
 
 /**
@@ -293,6 +295,8 @@ function updateCourseAPI(req, res) {
 
     var data = req.body;
     data.contentId = req.params.contentId;
+    data.apiId = 'sunbird.course.update';
+    data.apiVersion = '1.0';
 
     updateCourse(data, function(error, data) {
 

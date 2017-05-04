@@ -45,20 +45,15 @@ function generateUUID() {
 
 
 exports.ERROR_CODE = {
-    COURSE_CREATE_INVALID_OBJECT : "COURSE_CREATE_INVALID_OBJECT",
-    COURSE_CREATE_FAILED : "COURSE_CREATE_FAILED",
-
-    COURSE_SEARCH_INVALID_OBJECT : "COURSE_SEARCH_INVALID_OBJECT",
-    COURSE_SEARCH_FAILED : "COURSE_SEARCH_FAILED"
+    ERR_COURSE_REQ_FIELDS_MISSING : "ERR_COURSE_REQ_FIELDS_MISSING",
+    ERR_COURSE_SEARCH_FIELDS_MISSING : "ERR_COURSE_SEARCH_FIELDS_MISSING",
+    ERR_COURSE_UPDATE_FIELDS_MISSING : "ERR_COURSE_UPDATE_FIELDS_MISSING"
 }
 
 exports.ERROR_MESSAGE = {
-    VALIDATION_ERROR : "Validation Errors",
-    INVALID_REQUEST : "Invalid Request",
-    EKSTEP_ERROR : "Ekstep reject the api"
-
-
-
+    ERR_COURSE_REQ_FIELDS_MISSING : "Required fields for course are missing",
+    ERR_COURSE_SEARCH_FIELDS_MISSING : "Required fields for search course are missing",
+    ERR_COURSE_UPDATE_FIELDS_MISSING : "Required fields for update course are missing",
 }
 
 exports.RESPONSE_CODE = {
@@ -66,8 +61,7 @@ exports.RESPONSE_CODE = {
 }
 
 exports.GENERIC_MESSAGE = {
-    NAME_FIELD_REQUIRED : "Required Metadata name not set",
-    DESCRIPTION_FIELD_REQUIRED : "Required metadata description not set"
+    REQUIRED_FIELD_NOT_FOUND : "Required Metadata not set"
 }
 
 
