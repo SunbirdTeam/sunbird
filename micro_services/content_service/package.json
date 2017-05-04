@@ -4,7 +4,7 @@
   "description": "This service used to perform CRUD operations on content",
   "main": "app.js",
   "scripts": {
-    "test": "test"
+    "test": "jasmine-node ."
   },
   "author": "Harish Kumar Gangula",
   "license": "ISC",
@@ -15,5 +15,8 @@
     "https": "^1.0.0",
     "method-override": "^2.3.5",
     "node-rest-client": "^3.1.0"
+  },
+  "devDependencies": {
+    "frisby": "^0.8.5"
   }
 }

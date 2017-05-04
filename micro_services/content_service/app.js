@@ -37,8 +37,8 @@ app.get('/', function(req, res){
     res.send('Welcome to Sunbird');
 });
 
-require('./routes/course-routes')(app);
-require('./routes/content-routes')(app);
+require('./routes/courseRoutes')(app);
+require('./routes/contentRoutes')(app);
 
 
 

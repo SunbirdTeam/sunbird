@@ -1,4 +1,4 @@
-var restClient = require('./rest-client-service');
+var restClient = require('./restClientService');
 
 
 /**
