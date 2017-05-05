@@ -34,9 +34,6 @@ function getContentTypeForCourse() {
     return "Collection";
 }
 
-function getApiVersion() {
-    return '1.0';
-}
 
 /**
  * This function first check all the required params, and then create course in ekstep, After that we store in cache
@@ -48,7 +45,6 @@ function createCourse(data, callback) {
 
     var rspObj = {
         id: data.apiId,
-        version: data.apiVersion,
         msgId: null,
         result: {}
     };
@@ -72,7 +68,7 @@ function createCourse(data, callback) {
         function(CBW) {
             ekStepUtils.createContent(ekStepData, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== "OK") {
+                if (err || res.responseCode !== respUtil.GENERIC_MESSAGE.SUCCESS_RESPONCE_CODE) {
                     rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_REQ_FAILED;
                     rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_REQ_FAILED;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
@@ -102,7 +98,6 @@ function searchCourse(data, callback) {
 
     var rspObj = {
         id: data.apiId,
-        version: data.apiVersion,
         msgId: null,
         result: {}
     };
@@ -116,13 +111,12 @@ function searchCourse(data, callback) {
 
     data.request.filters.contentType = getContentTypeForCourse();
     delete data['apiId'];
-    delete data['apiVersion'];
 
     async.waterfall([
 
         function(CBW) {
             ekStepUtils.searchContent(data, function(err, res) {
-                if (err || res.responseCode !== "OK") {
+                if (err || res.responseCode !== respUtil.GENERIC_MESSAGE.SUCCESS_RESPONCE_CODE) {
                     rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_SEARCH_FAILED;
                     rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_SEARCH_FAILED;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
@@ -152,7 +146,6 @@ function updateCourse(data, callback) {
 
     var rspObj = {
         id: data.apiId,
-        version: data.apiVersion,
         msgId: null,
         result: {}
     };
@@ -175,7 +168,7 @@ function updateCourse(data, callback) {
         function(CBW) {
             ekStepUtils.updateContent(ekStepData, data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== "OK") {
+                if (err || res.responseCode !== respUtil.GENERIC_MESSAGE.SUCCESS_RESPONCE_CODE) {
                     rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_UPDATE_FAILED;
                     rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_UPDATE_FAILED;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
@@ -205,7 +198,6 @@ function reviewCourse(data, callback) {
 
     var rspObj = {
         id: data.apiId,
-        version: data.apiVersion,
         msgId: null,
         result: {}
     };
@@ -215,7 +207,7 @@ function reviewCourse(data, callback) {
         function(CBW) {
             ekStepUtils.reviewContent(data.body, data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== "OK") {
+                if (err || res.responseCode !== respUtil.GENERIC_MESSAGE.SUCCESS_RESPONCE_CODE) {
                     rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_REVIEW_FAILED;
                     rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_REVIEW_FAILED;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
@@ -245,7 +237,6 @@ function publishCourse(data, callback) {
 
     var rspObj = {
         id: data.apiId,
-        version: data.apiVersion,
         msgId: null,
         result: {}
     };
@@ -255,7 +246,7 @@ function publishCourse(data, callback) {
         function(CBW) {
             ekStepUtils.publishContent(data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== "OK") {
+                if (err || res.responseCode !== respUtil.GENERIC_MESSAGE.SUCCESS_RESPONCE_CODE) {
                     rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_PUBLISH_FAILED;
                     rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_PUBLISH_FAILED;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
@@ -286,7 +277,6 @@ function getAllTOC(data, callback) {
 
     var rspObj = {
         id: data.apiId,
-        version: data.apiVersion,
         msgId: null,
         result: {}
     };
@@ -295,7 +285,7 @@ function getAllTOC(data, callback) {
         function(CBW) {
             ekStepUtils.getContent(data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== "OK") {
+                if (err || res.responseCode !== respUtil.GENERIC_MESSAGE.SUCCESS_RESPONCE_CODE) {
                     rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_GET_ALL_TOC_FAILED;
                     rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_GET_ALL_TOC_FAILED;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
@@ -322,8 +312,7 @@ function getAllTOC(data, callback) {
 function searchCourseAPI(req, res) {
 
     var data = req.body;
-    data.apiId = 'sunbird.course.search';
-    data.apiVersion = getApiVersion();
+    data.apiId = respUtil.API_ID.COURSE_SEARCH;
 
     searchCourse(data, function(error, data) {
 
@@ -344,8 +333,7 @@ function searchCourseAPI(req, res) {
 function createCourseAPI(req, res) {
 
     var data = req.body;
-    data.apiId = 'sunbird.course.save';
-    data.apiVersion = getApiVersion();
+    data.apiId = respUtil.API_ID.COURSE_CREATE;
 
     createCourse(data, function(error, data) {
 
@@ -362,8 +350,7 @@ function updateCourseAPI(req, res) {
 
     var data = req.body;
     data.contentId = req.params.contentId;
-    data.apiId = 'sunbird.course.update';
-    data.apiVersion = getApiVersion();
+    data.apiId = respUtil.API_ID.COURSE_UPDATE;
 
     updateCourse(data, function(error, data) {
 
@@ -381,8 +368,7 @@ function reviewCourseAPI(req, res) {
         body: req.body
     };
     data.contentId = req.params.contentId;
-    data.apiId = 'sunbird.course.review';
-    data.apiVersion = getApiVersion();
+    data.apiId = respUtil.API_ID.COURSE_REVIEW;
 
     reviewCourse(data, function(error, data) {
 
@@ -399,8 +385,7 @@ function publishCourseAPI(req, res) {
 
     var data = {};
     data.contentId = req.params.contentId;
-    data.apiId = 'sunbird.course.publish';
-    data.apiVersion = getApiVersion();
+    data.apiId = respUtil.API_ID.COURSE_PUBLISH;
 
     publishCourse(data, function(error, data) {
 
@@ -417,8 +402,7 @@ function getAllTOCAPI(req, res) {
 
     var data = {};
     data.contentId = req.params.contentId;
-    data.apiId = 'sunbird.course.getAllToc';
-    data.apiVersion = getApiVersion();
+    data.apiId = respUtil.API_ID.COURSE_GET_ALL;
 
     getAllTOC(data, function(error, data) {
 
@@ -440,8 +424,7 @@ function getMyTOCAPI(req, res) {
             }
         }
     };
-    data.apiId = 'sunbird.course.getMyToc';
-    data.apiVersion = getApiVersion();
+    data.apiId = respUtil.API_ID.COURSE_GET_MY;
 
     searchCourse(data, function(error, data) {
 
