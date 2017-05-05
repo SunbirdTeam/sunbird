@@ -5,9 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "karma start karma.conf.js",
-    "preinstall": "npm install ./../../js-utils/sb-config-util && npm install ./../../js-utils/sb-http-util && npm install ./../../js-utils/sb-ekstep-util"       
+    "preinstall": "npm install ./../../js-utils/sb-config-util && npm install ./../../js-utils/sb-http-util && npm install ./../../js-utils/sb-ekstep-util"
   },
-
   "author": "Harish Kumar Gangula",
   "license": "ISC",
   "dependencies": {
@@ -16,7 +15,6 @@
     "express": "^4.13.3",
     "https": "^1.0.0",
     "method-override": "^2.3.5",
-    "node-rest-client": "^3.1.0",
     "randomstring": "^1.1.5",
     "uuid": "^3.0.1"
   },

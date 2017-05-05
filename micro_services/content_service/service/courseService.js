@@ -1,4 +1,3 @@
-var restClient = require('./restClientService');
 var respUtil = require('./responseUtil.js');
 var async = require('async');
 var randomString = require('randomstring');
@@ -463,7 +462,7 @@ module.exports.publishCourseAPI = publishCourseAPI;
 module.exports.getAllTOCAPI = getAllTOCAPI;
 module.exports.getMyTOCAPI = getMyTOCAPI;
 
-//fot test purpose
+//for test purpose
 module.exports.createCourse = createCourse;
 module.exports.searchCourse = searchCourse;
 module.exports.updateCourse = updateCourse;
