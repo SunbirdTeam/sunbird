@@ -1,7 +1,15 @@
-var respUtil = require('./responseUtil.js');
+/**
+ * @name : courseService.js
+ * @description :: Responsible for handle course service
+ * @author      :: Anuj Gupta
+ */
+
 var async = require('async');
 var randomString = require('randomstring');
 var ekStepUtils = require('sb-ekstep-util');
+var respUtil = require('./responseUtil.js');
+var courseUtil = require('./messageUtil').COURSE;
+var LOG = require('sb_logger_util').logger;
 
 function transformReqResBody(body, oldKey, newKey) {
     var ekStepData = {
@@ -34,26 +42,75 @@ function getContentTypeForCourse() {
     return "Collection";
 }
 
-
 /**
- * This function first check all the required params, and then create course in ekstep, After that we store in cache
- * @param {object} data
- * @param {function} callback
- * @returns {callback} with error or response
+ * Wrapper function to search function
+ * @param {object} req
+ * @param {object} response
  */
-function createCourse(data, callback) {
+function searchCourseAPI(req, response) {
+
+    var data = req.body;
 
     var rspObj = {
-        id: data.apiId,
+        id: respUtil.API_ID.COURSE_SEARCH,
+        msgId: null,
+        result: {}
+    };
+
+    if (!data.request || !data.request.filters) {
+        rspObj.errCode = courseUtil.SEARCH.MISSING_CODE;
+        rspObj.errMsg = courseUtil.SEARCH.MISSING_MESSAGE;
+        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
+        return response.status(400).send(respUtil.errorResponse(rspObj));
+    }
+
+    data.request.filters.contentType = getContentTypeForCourse();
+
+    async.waterfall([
+
+        function(CBW) {
+            ekStepUtils.searchContent(data, function(err, res) {
+
+                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
+                    rspObj.errCode = courseUtil.SEARCH.FAILED_CODE;
+                    rspObj.errMsg = courseUtil.SEARCH.FAILED_MESSAGE;
+                    rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
+                    return response.status(400).send(respUtil.errorResponse(rspObj));
+                } else {
+                    CBW(null, res);
+                }
+            });
+        },
+
+        function(res) {
+            rspObj.result = res.result;
+            return response.status(200).send(respUtil.successResponse(rspObj));
+        }
+    ]);
+}
+
+/**
+ * wrapper function for create course
+ * @param {type} req
+ * @param {type} response
+ * @returns {undefined}
+ */
+function createCourseAPI(req, response) {
+
+    var data = req.body;
+
+    var rspObj = {
+        id: respUtil.API_ID.COURSE_CREATE,
         msgId: null,
         result: {}
     };
 
     if (!data.request || !data.request.course || !checkRequiredKey(data.request.course, ['name', 'description'])) {
-        rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_REQ_FIELDS_MISSING;
-        rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_REQ_FIELDS_MISSING;
+        rspObj.errCode = courseUtil.CREATE.MISSING_CODE;
+        rspObj.errMsg = courseUtil.CREATE.MISSING_MESSAGE;
         rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
-        return callback(respUtil.errorResponse(rspObj), null);
+        return response.status(400).send(respUtil.errorResponse(rspObj));
+
     }
 
     //Tranform request for Ekstep
@@ -68,11 +125,11 @@ function createCourse(data, callback) {
         function(CBW) {
             ekStepUtils.createContent(ekStepData, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== respUtil.GENERIC_MESSAGE.SUCCESS_RESPONCE_CODE) {
-                    rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_REQ_FAILED;
-                    rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_REQ_FAILED;
+                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
+                    rspObj.errCode = courseUtil.CREATE.MISSING_CODE;
+                    rspObj.errMsg = courseUtil.CREATE.MISSING_MESSAGE;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
-                    return callback(respUtil.errorResponse(rspObj), null);
+                    return response.status(400).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
@@ -81,80 +138,29 @@ function createCourse(data, callback) {
         function(res) {
             rspObj.result.course_id = res.result.node_id;
             rspObj.result.versionKey = res.result.versionKey;
-            return callback(null, respUtil.successResponse(rspObj));
+            return response.status(200).send(respUtil.successResponse(rspObj));
         }
 
     ]);
 }
 
 
-/**
- * Search the content from the ekstep
- * @param {object} data
- * @param {function} callback
- * @returns {callback} with error or response
- */
-function searchCourse(data, callback) {
+function updateCourseAPI(req, response) {
+
+    var data = req.body;
+    data.contentId = req.params.contentId;
 
     var rspObj = {
-        id: data.apiId,
-        msgId: null,
-        result: {}
-    };
-
-    if (!data.request || !data.request.filters) {
-        rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_SEARCH_FIELDS_MISSING;
-        rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_SEARCH_FIELDS_MISSING;
-        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
-        return callback(respUtil.errorResponse(rspObj), null);
-    }
-
-    data.request.filters.contentType = getContentTypeForCourse();
-    delete data['apiId'];
-
-    async.waterfall([
-
-        function(CBW) {
-            ekStepUtils.searchContent(data, function(err, res) {
-                if (err || res.responseCode !== respUtil.GENERIC_MESSAGE.SUCCESS_RESPONCE_CODE) {
-                    rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_SEARCH_FAILED;
-                    rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_SEARCH_FAILED;
-                    rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
-                    return callback(respUtil.errorResponse(rspObj), null);
-                } else {
-                    CBW(null, res);
-                }
-            });
-        },
-
-        function(res) {
-            rspObj.result = res.result;
-            return callback(null, respUtil.successResponse(rspObj));
-        }
-    ]);
-}
-
-
-/**
- * update metadata of the course
- * @param {object} data
- * @param {function} callback
- * @returns {callback} with error or response
- */
-
-function updateCourse(data, callback) {
-
-    var rspObj = {
-        id: data.apiId,
+        id: respUtil.API_ID.COURSE_UPDATE,
         msgId: null,
         result: {}
     };
 
     if (!data.request || !data.request.course || !checkRequiredKey(data.request.course, ['versionKey'])) {
-        rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_UPDATE_FIELDS_MISSING;
-        rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_UPDATE_FIELDS_MISSING;
+        rspObj.errCode = courseUtil.ERROR_CODE.ERR_COURSE_UPDATE_FIELDS_MISSING;
+        rspObj.errMsg = courseUtil.ERROR_MESSAGE.ERR_COURSE_UPDATE_FIELDS_MISSING;
         rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
-        return callback(respUtil.errorResponse(rspObj), null);
+        return response.status(400).send(respUtil.errorResponse(rspObj));
     }
 
     //Tranform request for Ekstep
@@ -168,11 +174,11 @@ function updateCourse(data, callback) {
         function(CBW) {
             ekStepUtils.updateContent(ekStepData, data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== respUtil.GENERIC_MESSAGE.SUCCESS_RESPONCE_CODE) {
-                    rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_UPDATE_FAILED;
-                    rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_UPDATE_FAILED;
+                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
+                    rspObj.errCode = courseUtil.ERROR_CODE.ERR_COURSE_UPDATE_FAILED;
+                    rspObj.errMsg = courseUtil.ERROR_MESSAGE.ERR_COURSE_UPDATE_FAILED;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
-                    return callback(respUtil.errorResponse(rspObj), null);
+                    return response.status(400).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
@@ -182,19 +188,18 @@ function updateCourse(data, callback) {
         function(res) {
             rspObj.result.course_id = res.result.node_id;
             rspObj.result.versionKey = res.result.versionKey;
-            return callback(null, respUtil.successResponse(rspObj));
+            return response.status(200).send(respUtil.successResponse(rspObj));
         }
     ]);
 }
 
-/**
- * review the course
- * @param {object} data
- * @param {function} callback
- * @returns {callback} with error or response
- */
+function reviewCourseAPI(req, response) {
 
-function reviewCourse(data, callback) {
+    var data = {
+        body: req.body
+    };
+    data.contentId = req.params.contentId;
+    data.apiId = respUtil.API_ID.COURSE_REVIEW;
 
     var rspObj = {
         id: data.apiId,
@@ -207,11 +212,11 @@ function reviewCourse(data, callback) {
         function(CBW) {
             ekStepUtils.reviewContent(data.body, data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== respUtil.GENERIC_MESSAGE.SUCCESS_RESPONCE_CODE) {
-                    rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_REVIEW_FAILED;
-                    rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_REVIEW_FAILED;
+                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
+                    rspObj.errCode = courseUtil.REVIEW.FAILED_CODE;
+                    rspObj.errMsg = courseUtil.REVIEW.FAILED_MESSAGE;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
-                    return callback(respUtil.errorResponse(rspObj), null);
+                    return response.status(400).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
@@ -221,22 +226,19 @@ function reviewCourse(data, callback) {
         function(res) {
             rspObj.result.course_id = res.result.node_id;
             rspObj.result.versionKey = res.result.versionKey;
-            return callback(null, respUtil.successResponse(rspObj));
+            return response.status(200).send(respUtil.successResponse(rspObj));
         }
     ]);
 }
 
-/**
- * publish the course
- * @param {object} data
- * @param {function} callback
- * @returns {callback} with error or response
- */
 
-function publishCourse(data, callback) {
+function publishCourseAPI(req, response) {
+
+    var data = {};
+    data.contentId = req.params.contentId;
 
     var rspObj = {
-        id: data.apiId,
+        id: respUtil.API_ID.COURSE_PUBLISH,
         msgId: null,
         result: {}
     };
@@ -246,11 +248,11 @@ function publishCourse(data, callback) {
         function(CBW) {
             ekStepUtils.publishContent(data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== respUtil.GENERIC_MESSAGE.SUCCESS_RESPONCE_CODE) {
-                    rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_PUBLISH_FAILED;
-                    rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_PUBLISH_FAILED;
+                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
+                    rspObj.errCode = courseUtil.PUBLISH.FAILED_CODE;
+                    rspObj.errMsg = courseUtil.PUBLISH.FAILED_MESSAGE;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
-                    return callback(respUtil.errorResponse(rspObj), null);
+                    return response.status(400).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
@@ -261,19 +263,16 @@ function publishCourse(data, callback) {
             rspObj.result.course_id = res.result.node_id;
             rspObj.result.versionKey = res.result.versionKey;
             rspObj.result.publishStatus = res.result.publishStatus;
-            return callback(null, respUtil.successResponse(rspObj));
+            return response.status(200).send(respUtil.successResponse(rspObj));
         }
     ]);
 }
 
-/**
- * get All the course
- * @param {object} data
- * @param {function} callback
- * @returns {callback} with error or response
- */
+function getCourseAPI(req, response) {
 
-function getAllTOC(data, callback) {
+    var data = {};
+    data.contentId = req.params.contentId;
+    data.apiId = respUtil.API_ID.COURSE_GET_ALL;
 
     var rspObj = {
         id: data.apiId,
@@ -285,11 +284,11 @@ function getAllTOC(data, callback) {
         function(CBW) {
             ekStepUtils.getContent(data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== respUtil.GENERIC_MESSAGE.SUCCESS_RESPONCE_CODE) {
-                    rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_GET_ALL_TOC_FAILED;
-                    rspObj.errMsg = respUtil.ERROR_MESSAGE.ERR_COURSE_GET_ALL_TOC_FAILED;
+                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
+                    rspObj.errCode = courseUtil.GET.FAILED_CODE;
+                    rspObj.errMsg = courseUtil.GET.FAILED_MESSAGE;
                     rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
-                    return callback(respUtil.errorResponse(rspObj), null);
+                    response.status(400).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
@@ -298,142 +297,50 @@ function getAllTOC(data, callback) {
 
         function(res) {
             rspObj.result = transformReqResBody(res.result, 'content', 'course');
-            return callback(null, respUtil.successResponse(rspObj));
+            return response.status(200).send(respUtil.successResponse(rspObj));
         }
     ]);
 }
 
-
-/**
- * Wrapper function to search function
- * @param {object} req
- * @param {object} res
- */
-function searchCourseAPI(req, res) {
-
-    var data = req.body;
-    data.apiId = respUtil.API_ID.COURSE_SEARCH;
-
-    searchCourse(data, function(error, data) {
-
-        if (error) {
-            return res.send(error);
-        } else {
-            return res.send(data);
-        }
-    });
-}
-
-/**
- * wrapper function for create course
- * @param {type} req
- * @param {type} res
- * @returns {undefined}
- */
-function createCourseAPI(req, res) {
-
-    var data = req.body;
-    data.apiId = respUtil.API_ID.COURSE_CREATE;
-
-    createCourse(data, function(error, data) {
-
-        if (error) {
-            return res.send(error);
-        } else {
-            return res.send(data);
-        }
-    });
-}
-
-
-function updateCourseAPI(req, res) {
-
-    var data = req.body;
-    data.contentId = req.params.contentId;
-    data.apiId = respUtil.API_ID.COURSE_UPDATE;
-
-    updateCourse(data, function(error, data) {
-
-        if (error) {
-            return res.send(error);
-        } else {
-            return res.send(data);
-        }
-    });
-}
-
-function reviewCourseAPI(req, res) {
-
-    var data = {
-        body: req.body
-    };
-    data.contentId = req.params.contentId;
-    data.apiId = respUtil.API_ID.COURSE_REVIEW;
-
-    reviewCourse(data, function(error, data) {
-
-        if (error) {
-            return res.send(error);
-        } else {
-            return res.send(data);
-        }
-    });
-}
-
-
-function publishCourseAPI(req, res) {
-
-    var data = {};
-    data.contentId = req.params.contentId;
-    data.apiId = respUtil.API_ID.COURSE_PUBLISH;
-
-    publishCourse(data, function(error, data) {
-
-        if (error) {
-            return res.send(error);
-        } else {
-            return res.send(data);
-        }
-    });
-
-}
-
-function getAllTOCAPI(req, res) {
-
-    var data = {};
-    data.contentId = req.params.contentId;
-    data.apiId = respUtil.API_ID.COURSE_GET_ALL;
-
-    getAllTOC(data, function(error, data) {
-
-        if (error) {
-            return res.send(error);
-        } else {
-            return res.send(data);
-        }
-    });
-}
-
-function getMyTOCAPI(req, res) {
+function getMyCourseAPI(req, response) {
 
     var data = {
         "request": {
             "filters": {
                 // "createdBy": req.userId  
-                "createdBy": req.body.createdBy
+                "createdBy": req.body.createdBy,
+                "contentType":  getContentTypeForCourse()
             }
         }
     };
-    data.apiId = respUtil.API_ID.COURSE_GET_MY;
+    
+    var rspObj = {
+        id: respUtil.API_ID.COURSE_GET_MY,
+        msgId: null,
+        result: {}
+    };
 
-    searchCourse(data, function(error, data) {
+    async.waterfall([
 
-        if (error) {
-            return res.send(error);
-        } else {
-            return res.send(data);
+        function(CBW) {
+            ekStepUtils.searchContent(data, function(err, res) {
+
+                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
+                    rspObj.errCode = courseUtil.GET_MY.FAILED_CODE;
+                    rspObj.errMsg = courseUtil.GET_MY.FAILED_MESSAGE;
+                    rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
+                    return response.status(400).send(respUtil.errorResponse(rspObj));
+                } else {
+                    CBW(null, res);
+                }
+            });
+        },
+
+        function(res) {
+            rspObj.result = res.result;
+            return response.status(200).send(respUtil.successResponse(rspObj));
         }
-    });
+    ]);
 }
 
 
@@ -442,14 +349,5 @@ module.exports.createCourseAPI = createCourseAPI;
 module.exports.updateCourseAPI = updateCourseAPI;
 module.exports.reviewCourseAPI = reviewCourseAPI;
 module.exports.publishCourseAPI = publishCourseAPI;
-module.exports.getAllTOCAPI = getAllTOCAPI;
-module.exports.getMyTOCAPI = getMyTOCAPI;
-
-//for test purpose
-module.exports.createCourse = createCourse;
-module.exports.searchCourse = searchCourse;
-module.exports.updateCourse = updateCourse;
-module.exports.reviewCourse = reviewCourse;
-module.exports.publishCourse = publishCourse;
-module.exports.getAllTOC = getAllTOC;
-//module.exports.getMyTOC         = getMyTOC;
+module.exports.getCourseAPI = getCourseAPI;
+module.exports.getMyCourseAPI = getMyCourseAPI;

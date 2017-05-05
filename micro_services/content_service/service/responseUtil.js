@@ -48,74 +48,33 @@ function getApiVersion() {
 }
 
 
-exports.ERROR_CODE = {
-    ERR_COURSE_REQ_FIELDS_MISSING: "ERR_COURSE_REQ_FIELDS_MISSING",
-    ERR_COURSE_REQ_FAILED: "ERR_COURSE_REQ_FAILED",
-
-    ERR_COURSE_SEARCH_FIELDS_MISSING: "ERR_COURSE_SEARCH_FIELDS_MISSING",
-    ERR_COURSE_SEARCH_FAILED: "ERR_COURSE_SEARCH_FAILED",
-
-    ERR_COURSE_UPDATE_FIELDS_MISSING: "ERR_COURSE_UPDATE_FIELDS_MISSING",
-    ERR_COURSE_UPDATE_FAILED: "ERR_COURSE_UPDATE_FAILED",
-
-    ERR_COURSE_REVIEW_FAILED: "ERR_COURSE_REVIEW_FAILED",
-
-    ERR_COURSE_PUBLISH_FAILED: "ERR_COURSE_PUBLISH_FAILED",
-
-    ERR_COURSE_GET_ALL_TOC_FAILED: "ERR_COURSE_GET_ALL_TOC_FAILED",
-
-    ERR_COURSE_GET_MY_TOC_FAILED: "ERR_COURSE_GET_MY_TOC_FAILED"
-};
-
-exports.ERROR_MESSAGE = {
-    ERR_COURSE_REQ_FIELDS_MISSING: "Required fields for course are missing",
-    ERR_COURSE_REQ_FAILED: "Create course failed",
-
-    ERR_COURSE_SEARCH_FIELDS_MISSING: "Required fields for search course are missing",
-    ERR_COURSE_SEARCH_FAILED: "Search course failed",
-
-    ERR_COURSE_UPDATE_FIELDS_MISSING: "Required fields for update course are missing",
-    ERR_COURSE_UPDATE_FAILED: "Update course failed",
-
-    ERR_COURSE_REVIEW_FAILED: "Review course failed",
-
-    ERR_COURSE_PUBLISH_FAILED: "Publish course failed",
-
-    ERR_COURSE_GET_ALL_TOC_FAILED : "Get All toc failed",
-
-    ERR_COURSE_GET_MY_TOC_FAILED : "Get All toc failed"
-
-};
-
 exports.RESPONSE_CODE = {
     CLIENT_ERROR: "CLIENT_ERROR",
-    SERVER_ERROR: "SERVER_ERROR"
+    SERVER_ERROR: "SERVER_ERROR",
+    SUCCESS : "OK"
 };
 
 exports.GENERIC_MESSAGE = {
-
-    SUCCESS_RESPONCE_CODE : "OK",
-
     REQUIRED_FIELD_NOT_FOUND: "Required Metadata not set"
 };
 
 exports.API_ID = {
 
-    COURSE_SEARCH: "sunbird.course.search",
-    COURSE_CREATE: "sunbird.course.create",
-    COURSE_UPDATE: "sunbird.course.update",
-    COURSE_REVIEW: "sunbird.course.review",
-    COURSE_PUBLISH: "sunbird.course.publish",
-    COURSE_GET_ALL: "sunbird.course.getAllToc",
-    COURSE_GET_MY: "sunbird.course.getMyToc",
+    COURSE_SEARCH: "api.course.search",
+    COURSE_CREATE: "api.course.create",
+    COURSE_UPDATE: "api.course.update",
+    COURSE_REVIEW: "api.course.review",
+    COURSE_PUBLISH: "api.course.publish",
+    COURSE_GET_ALL: "api.course.getCourse",
+    COURSE_GET_MY: "api.course.getMyCourse",
 
-    CONTENT_SEARCH: "sunbird.content.search",
-    CONTENT_CREATE: "sunbird.content.create",
-    CONTENT_UPDATE: "sunbird.content.update",
-    CONTENT_REVIEW: "sunbird.content.review",
-    CONTENT_PUBLISH: "sunbird.content.publish",
-    CONTENT_GET_ALL: "sunbird.content.getAllToc",
-    CONTENT_GET_MY: "sunbird.content.getMyToc"
+    CONTENT_SEARCH: "api.content.search",
+    CONTENT_CREATE: "api.content.create",
+    CONTENT_UPDATE: "api.content.update",
+    CONTENT_REVIEW: "api.content.review",
+    CONTENT_PUBLISH: "api.content.publish",
+    CONTENT_GET_ALL: "api.content.getAllToc",
+    CONTENT_GET_MY: "api.content.getMyToc"
 };
 
 

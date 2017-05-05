@@ -25,9 +25,9 @@ module.exports = function(app) {
     app.route(BASE_URL_V1 + '/publish/:contentId')
         .get(courseService.publishCourseAPI);
 
-    app.route(BASE_URL_V1 + '/toc/:contentId')
-        .get(courseService.getAllTOCAPI);
+    app.route(BASE_URL_V1 + '/get/:contentId')
+        .get(courseService.getCourseAPI);
 
-    app.route(BASE_URL_V1 + '/toc')
-        .post(courseService.getMyTOCAPI);
+   app.route(BASE_URL_V1 + '/get/mycourse')
+       .post(courseService.getMyCourseAPI);
 };

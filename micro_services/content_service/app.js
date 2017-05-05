@@ -31,10 +31,8 @@ app.use(function(req, res, next) {
     next();
 });
 
-
-
-app.get('/', function(req, res){
-    res.send('Welcome to Sunbird');
+app.use(function(err, req, res, next) {
+    return res.send("Invalid resousce found");
 });
 
 require('./routes/courseRoutes')(app);
