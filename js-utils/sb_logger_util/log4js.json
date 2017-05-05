@@ -1,24 +1,21 @@
 {
-  "appenders": [
-    {
-      "type": "clustered",
-      "appenders": [
+    "appenders": [{
+        "type": "clustered",
+        "appenders": [
 
-        {
-          "type": "console"
-        },
-        {
-          "type": "logLevelFilter",
-          "level": "TRACE",
-          "category": "api",
-          "appender": {
-            "type": "file",
-              "maxLogSize": 409600,
-              "backups": 5,
-            "filename": "../../log/microService.log"
-          }
-        }
-      ]
-    }
-  ]
+            {
+                "type": "console"
+            }, {
+                "type": "logLevelFilter",
+                "level": "TRACE",
+                "category": "api",
+                "appender": {
+                    "type": "file",
+                    "maxLogSize": 409600,
+                    "backups": 5,
+                    "filename": "../../log/microService.log"
+                }
+            }
+        ]
+    }]
 }

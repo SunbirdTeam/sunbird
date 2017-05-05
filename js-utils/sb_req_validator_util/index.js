@@ -1,23 +1,16 @@
-/**
- * index
- * 
- * @module      ::Lib
- * @description :: Represent utility functions for http requests and acts as entry file for http utility package
- * @author      :: Loganathan
+/*
+ * @file: index.js
+ * @author: Anuj Gupta
+ * @desc: using log4s, enables application wide logging.
  */
-var request = require('request');
+var Validator = require('validatorjs');
 
+function validate(data, rules) {
 
-
-
-//sends http request with specified options and to forward to received response to callback
-sendRequest = function(options, cb) {
-    request(options, function(error, response, body) {
-        cb(error, response, body);
-    });
+    var validation = new Validator(data, rules);
+    return validation.passes();
 }
 
-
 module.exports = {
-    sendRequest: sendRequest
+    validate: validate
 };

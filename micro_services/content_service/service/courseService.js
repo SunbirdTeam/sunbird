@@ -6,10 +6,16 @@
 
 var async = require('async');
 var randomString = require('randomstring');
-var ekStepUtils = require('sb-ekstep-util');
-var respUtil = require('./responseUtil.js');
-var courseUtil = require('./messageUtil').COURSE;
+var ekStepUtil = require('sb-ekstep-util');
+var respUtil = require('response_util');
 var LOG = require('sb_logger_util').logger;
+var validatorUtil = require('sb_req_validator_util');
+var courseModel = require('../models/courseModel').COURSE;
+var messageUtils = require('./messageUtil');
+
+var courseMessage = messageUtils.COURSE;
+var responseCode = messageUtils.RESPONSE_CODE;
+
 
 function transformReqResBody(body, oldKey, newKey) {
     var ekStepData = {
@@ -21,13 +27,6 @@ function transformReqResBody(body, oldKey, newKey) {
             return ekStepData;
         }
     }
-}
-
-function checkRequiredKey(body, value) {
-
-    return value.every(function(val) {
-        return val in body;
-    });
 }
 
 function getCode() {
@@ -50,31 +49,27 @@ function getContentTypeForCourse() {
 function searchCourseAPI(req, response) {
 
     var data = req.body;
-
-    var rspObj = {
-        id: respUtil.API_ID.COURSE_SEARCH,
-        msgId: null,
-        result: {}
-    };
+    var rspObj = req.rspObj;
 
     if (!data.request || !data.request.filters) {
-        rspObj.errCode = courseUtil.SEARCH.MISSING_CODE;
-        rspObj.errMsg = courseUtil.SEARCH.MISSING_MESSAGE;
-        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
+        rspObj.errCode = courseMessage.SEARCH.MISSING_CODE;
+        rspObj.errMsg = courseMessage.SEARCH.MISSING_MESSAGE;
+        rspObj.responseCode = responseCode.CLIENT_ERROR;
         return response.status(400).send(respUtil.errorResponse(rspObj));
     }
 
     data.request.filters.contentType = getContentTypeForCourse();
+    var ekStepData = { request: data.request };
 
     async.waterfall([
 
         function(CBW) {
-            ekStepUtils.searchContent(data, function(err, res) {
+            ekStepUtil.searchContent(ekStepData, function(err, res) {
 
-                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
-                    rspObj.errCode = courseUtil.SEARCH.FAILED_CODE;
-                    rspObj.errMsg = courseUtil.SEARCH.FAILED_MESSAGE;
-                    rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
+                if (err || res.responseCode !== responseCode.SUCCESS) {
+                    rspObj.errCode = courseMessage.SEARCH.FAILED_CODE;
+                    rspObj.errMsg = courseMessage.SEARCH.FAILED_MESSAGE;
+                    rspObj.responseCode = res.responseCode;
                     return response.status(400).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -98,19 +93,14 @@ function searchCourseAPI(req, response) {
 function createCourseAPI(req, response) {
 
     var data = req.body;
+    var rspObj = req.rspObj;
 
-    var rspObj = {
-        id: respUtil.API_ID.COURSE_CREATE,
-        msgId: null,
-        result: {}
-    };
-
-    if (!data.request || !data.request.course || !checkRequiredKey(data.request.course, ['name', 'description'])) {
-        rspObj.errCode = courseUtil.CREATE.MISSING_CODE;
-        rspObj.errMsg = courseUtil.CREATE.MISSING_MESSAGE;
-        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
+    if (!data.request || !data.request.course || !validatorUtil.validate(data.request.course, courseModel.CREATE)) {
+        //prepare
+        rspObj.errCode = courseMessage.CREATE.MISSING_CODE;
+        rspObj.errMsg = courseMessage.CREATE.MISSING_MESSAGE;
+        rspObj.responseCode = responseCode.CLIENT_ERROR;
         return response.status(400).send(respUtil.errorResponse(rspObj));
-
     }
 
     //Tranform request for Ekstep
@@ -123,12 +113,12 @@ function createCourseAPI(req, response) {
     async.waterfall([
 
         function(CBW) {
-            ekStepUtils.createContent(ekStepData, function(err, res) {
+            ekStepUtil.createContent(ekStepData, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
-                    rspObj.errCode = courseUtil.CREATE.MISSING_CODE;
-                    rspObj.errMsg = courseUtil.CREATE.MISSING_MESSAGE;
-                    rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
+                if (err || res.responseCode !== responseCode.SUCCESS) {
+                    rspObj.errCode = courseMessage.CREATE.MISSING_CODE;
+                    rspObj.errMsg = courseMessage.CREATE.MISSING_MESSAGE;
+                    rspObj.responseCode = res.responseCode;
                     return response.status(400).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -150,16 +140,12 @@ function updateCourseAPI(req, response) {
     var data = req.body;
     data.contentId = req.params.contentId;
 
-    var rspObj = {
-        id: respUtil.API_ID.COURSE_UPDATE,
-        msgId: null,
-        result: {}
-    };
+    var rspObj = req.rspObj;
 
-    if (!data.request || !data.request.course || !checkRequiredKey(data.request.course, ['versionKey'])) {
-        rspObj.errCode = courseUtil.ERROR_CODE.ERR_COURSE_UPDATE_FIELDS_MISSING;
-        rspObj.errMsg = courseUtil.ERROR_MESSAGE.ERR_COURSE_UPDATE_FIELDS_MISSING;
-        rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
+    if (!data.request || !data.request.course || !validatorUtil.validate(data.request.course, courseModel.UPDATE)) {
+        rspObj.errCode = courseMessage.UPDATE.MISSING_CODE;
+        rspObj.errMsg = courseMessage.UPDATE.MISSING_MESSAGE;
+        rspObj.responseCode = responseCode.CLIENT_ERROR;
         return response.status(400).send(respUtil.errorResponse(rspObj));
     }
 
@@ -172,12 +158,11 @@ function updateCourseAPI(req, response) {
     async.waterfall([
 
         function(CBW) {
-            ekStepUtils.updateContent(ekStepData, data.contentId, function(err, res) {
-                //After check response, we perform other operation
-                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
-                    rspObj.errCode = courseUtil.ERROR_CODE.ERR_COURSE_UPDATE_FAILED;
-                    rspObj.errMsg = courseUtil.ERROR_MESSAGE.ERR_COURSE_UPDATE_FAILED;
-                    rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
+            ekStepUtil.updateContent(ekStepData, data.contentId, function(err, res) {
+                if (err || res.responseCode !== responseCode.SUCCESS) {
+                    rspObj.errCode = courseMessage.UPDATE.FAILED_CODE;
+                    rspObj.errMsg = courseMessage.UPDATE.FAILED_MESSAGE;
+                    rspObj.responseCode = res.responseCode;
                     return response.status(400).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -199,23 +184,18 @@ function reviewCourseAPI(req, response) {
         body: req.body
     };
     data.contentId = req.params.contentId;
-    data.apiId = respUtil.API_ID.COURSE_REVIEW;
 
-    var rspObj = {
-        id: data.apiId,
-        msgId: null,
-        result: {}
-    };
+    var rspObj = req.rspObj;
 
     async.waterfall([
 
         function(CBW) {
-            ekStepUtils.reviewContent(data.body, data.contentId, function(err, res) {
+            ekStepUtil.reviewContent(data.body, data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
-                    rspObj.errCode = courseUtil.REVIEW.FAILED_CODE;
-                    rspObj.errMsg = courseUtil.REVIEW.FAILED_MESSAGE;
-                    rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
+                if (err || res.responseCode !== responseCode.SUCCESS) {
+                    rspObj.errCode = courseMessage.REVIEW.FAILED_CODE;
+                    rspObj.errMsg = courseMessage.REVIEW.FAILED_MESSAGE;
+                    rspObj.responseCode = res.responseCode;
                     return response.status(400).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -237,21 +217,17 @@ function publishCourseAPI(req, response) {
     var data = {};
     data.contentId = req.params.contentId;
 
-    var rspObj = {
-        id: respUtil.API_ID.COURSE_PUBLISH,
-        msgId: null,
-        result: {}
-    };
+    var rspObj = req.rspObj;
 
     async.waterfall([
 
         function(CBW) {
-            ekStepUtils.publishContent(data.contentId, function(err, res) {
+            ekStepUtil.publishContent(data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
-                    rspObj.errCode = courseUtil.PUBLISH.FAILED_CODE;
-                    rspObj.errMsg = courseUtil.PUBLISH.FAILED_MESSAGE;
-                    rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
+                if (err || res.responseCode !== responseCode.SUCCESS) {
+                    rspObj.errCode = courseMessage.PUBLISH.FAILED_CODE;
+                    rspObj.errMsg = courseMessage.PUBLISH.FAILED_MESSAGE;
+                    rspObj.responseCode = res.responseCode;
                     return response.status(400).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -271,23 +247,27 @@ function publishCourseAPI(req, response) {
 function getCourseAPI(req, response) {
 
     var data = {};
+    data.body = req.body;
     data.contentId = req.params.contentId;
-    data.apiId = respUtil.API_ID.COURSE_GET_ALL;
 
-    var rspObj = {
-        id: data.apiId,
-        msgId: null,
-        result: {}
-    };
+    if (!data.contentId) {
+        rspObj.errCode = courseMessage.GET.FAILED_CODE;
+        rspObj.errMsg = courseMessage.GET.FAILED_MESSAGE;
+        rspObj.responseCode = responseCode.CLIENT_ERROR;
+        response.status(400).send(respUtil.errorResponse(rspObj));
+    }
+
+    var rspObj = req.rspObj;
+
     async.waterfall([
 
         function(CBW) {
-            ekStepUtils.getContent(data.contentId, function(err, res) {
+            ekStepUtil.getContent(data.contentId, function(err, res) {
                 //After check response, we perform other operation
-                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
-                    rspObj.errCode = courseUtil.GET.FAILED_CODE;
-                    rspObj.errMsg = courseUtil.GET.FAILED_MESSAGE;
-                    rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
+                if (err || res.responseCode !== responseCode.SUCCESS) {
+                    rspObj.errCode = courseMessage.GET.FAILED_CODE;
+                    rspObj.errMsg = courseMessage.GET.FAILED_MESSAGE;
+                    rspObj.responseCode = res.responseCode;
                     response.status(400).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -309,26 +289,22 @@ function getMyCourseAPI(req, response) {
             "filters": {
                 // "createdBy": req.userId  
                 "createdBy": req.body.createdBy,
-                "contentType":  getContentTypeForCourse()
+                "contentType": getContentTypeForCourse()
             }
         }
     };
-    
-    var rspObj = {
-        id: respUtil.API_ID.COURSE_GET_MY,
-        msgId: null,
-        result: {}
-    };
+
+    var rspObj = req.rspObj;
 
     async.waterfall([
 
         function(CBW) {
-            ekStepUtils.searchContent(data, function(err, res) {
+            ekStepUtil.searchContent(data, function(err, res) {
 
-                if (err || res.responseCode !== respUtil.RESPONSE_CODE.SUCCESS) {
-                    rspObj.errCode = courseUtil.GET_MY.FAILED_CODE;
-                    rspObj.errMsg = courseUtil.GET_MY.FAILED_MESSAGE;
-                    rspObj.responseCode = respUtil.RESPONSE_CODE.SERVER_ERROR;
+                if (err || res.responseCode !== responseCode.SUCCESS) {
+                    rspObj.errCode = courseMessage.GET_MY.FAILED_CODE;
+                    rspObj.errMsg = courseMessage.GET_MY.FAILED_MESSAGE;
+                    rspObj.responseCode = res.responseCode;
                     return response.status(400).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
