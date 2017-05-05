@@ -27,11 +27,11 @@ function getCode() {
     return 'org.sunbird.' + randomString.generate(6);
 }
 
-function getMimeType() {
+function getMimeTypeForCourse() {
     return "application/vnd.ekstep.content-collection";
 }
 
-function getContentType() {
+function getContentTypeForCourse() {
     return "Collection";
 }
 
@@ -63,8 +63,8 @@ function createCourse(data, callback) {
 
     //Tranform request for Ekstep
     data.request.course.code = getCode();
-    data.request.course.mimeType = getMimeType();
-    data.request.course.contentType = getContentType();
+    data.request.course.mimeType = getMimeTypeForCourse();
+    data.request.course.contentType = getContentTypeForCourse();
 
     var ekStepData = transformReqResBody(data.request, 'course', 'content');
 
@@ -114,6 +114,10 @@ function searchCourse(data, callback) {
         rspObj.responseCode = respUtil.RESPONSE_CODE.CLIENT_ERROR;
         return callback(respUtil.errorResponse(rspObj), null);
     }
+
+    data.request.filters.contentType = getContentTypeForCourse();
+    delete data['apiId'];
+    delete data['apiVersion'];
 
     async.waterfall([
 
@@ -170,7 +174,7 @@ function updateCourse(data, callback) {
     async.waterfall([
 
         function(CBW) {
-            ekStepUtils.updateContent(ekStepData, ekStepData.contentId, function(err, res) {
+            ekStepUtils.updateContent(ekStepData, data.contentId, function(err, res) {
                 //After check response, we perform other operation
                 if (err || res.responseCode !== "OK") {
                     rspObj.errCode = respUtil.ERROR_CODE.ERR_COURSE_UPDATE_FAILED;

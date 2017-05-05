@@ -18,7 +18,7 @@ createContent = function (data, cb) {
 }
 searchContent = function (data, cb) {
     var http_options = {
-        url: configUtil.getConfig('EKSTEP_LEARNING_API_URL') + configUtil.getConfig('EKSTEP_SEARCH_CONTENT_URI'),
+        url: configUtil.getConfig('EKSTEP_SEARCH_API_URL') + configUtil.getConfig('EKSTEP_SEARCH_CONTENT_URI'),
         headers: {
             'Content-Type': 'application/json'
         },
@@ -27,7 +27,6 @@ searchContent = function (data, cb) {
         body: data
 
     };
-
     httpUtil.sendRequest(http_options, function (err, res, body) {
         cb(err, body);
     });
@@ -43,7 +42,7 @@ updateContent = function (data, content_id, cb) {
         body: data
 
     };
-
+    
     httpUtil.sendRequest(http_options, function (err, res, body) {
         cb(err, body);
     });
@@ -54,7 +53,8 @@ getContent = function (content_id, cb) {
         headers: {
             'Content-Type': 'application/json'
         },
-        method: "GET"
+        method: "GET",
+        json: true
 
 
     };
@@ -86,7 +86,8 @@ publishContent = function (content_id, cb) {
         headers: {
             'Content-Type': 'application/json'
         },
-        method: "GET"
+        method: "GET",
+        json: true
 
 
     };
@@ -117,7 +118,7 @@ retireContent=function (data,content_id, cb) {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        method: "DELETE",       
+        method: "DELETE",
         body: data
 
     };
@@ -132,7 +133,7 @@ module.exports = {
     updateContent: updateContent,
     getContent: getContent,
     reviewContent: reviewContent,
-//    uploadContent: uploadContent,
+    //    uploadContent: uploadContent,
     publishContent: publishContent,
     listContent: listContent,
     retireContent: retireContent

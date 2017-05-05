@@ -17,11 +17,11 @@ getConfig = function (configuration_name) {
         EKSTEP_SEARCH_API_URL: "https://dev.ekstep.in/api/search",
         EKSTEP_LEARNING_API_URL: "https://dev.ekstep.in/api/learning",
         EKSTEP_CREATE_CONTENT_URI: "/v2/content",
-        EKSTEP_SEARCH_CONTENT_URI: "/v2/content/search",
+        EKSTEP_SEARCH_CONTENT_URI: "/v2/search",
         EKSTEP_UPDATE_CONTENT_URI: "/v2/content",
         EKSTEP_GET_CONTENT_URI: "/v2/content",
-        EKSTEP_REVIEW_CONTENT_URI: "/v2/content/review",
-        EKSTEP_PUBLISH_CONTENT_URI: "/v2/content/publish/",
+        EKSTEP_REVIEW_CONTENT_URI: "/v3/content/review",
+        EKSTEP_PUBLISH_CONTENT_URI: "/v2/content/publish",
         EKSTEP_LIST_CONTENT_URI: "/v2/content/list",
         EKSTEP_RETIRE_CONTENT_URI: "/v2/content"
 
