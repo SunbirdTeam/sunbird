@@ -1,7 +1,7 @@
 /*
  * @file: index.js
  * @author: Anuj Gupta
- * @desc: using log4s, enables application wide logging.
+ * @desc: using validator, we can perform validation on request body.
  */
 var Validator = require('validatorjs');
 
