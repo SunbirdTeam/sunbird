@@ -8,7 +8,7 @@ var async = require('async');
 var randomString = require('randomstring');
 var ekStepUtil = require('sb-ekstep-util');
 var respUtil = require('response_util');
-var LOG = require('sb_logger_util').logger;
+//var LOG = require('sb_logger_util').logger;
 var validatorUtil = require('sb_req_validator_util');
 var courseModel = require('../models/courseModel').COURSE;
 var messageUtils = require('./messageUtil');
@@ -184,13 +184,13 @@ function reviewCourseAPI(req, response) {
         body: req.body
     };
     data.contentId = req.params.contentId;
-
+    var ekStepData = { request: data.request };
     var rspObj = req.rspObj;
 
     async.waterfall([
 
         function(CBW) {
-            ekStepUtil.reviewContent(data.body, data.contentId, function(err, res) {
+            ekStepUtil.reviewContent(ekStepData, data.contentId, function(err, res) {
                 //After check response, we perform other operation
                 if (err || res.responseCode !== responseCode.SUCCESS) {
                     rspObj.errCode = courseMessage.REVIEW.FAILED_CODE;
@@ -284,22 +284,22 @@ function getCourseAPI(req, response) {
 
 function getMyCourseAPI(req, response) {
 
-    var data = {
-        "request": {
+    var request = {
             "filters": {
                 // "createdBy": req.userId  
-                "createdBy": req.body.createdBy,
+                "createdBy": req.params.createdBy,
                 "contentType": getContentTypeForCourse()
             }
-        }
+        
     };
-
+    req.body.request = request;
+    var ekStepData = { request: request };
     var rspObj = req.rspObj;
 
     async.waterfall([
 
         function(CBW) {
-            ekStepUtil.searchContent(data, function(err, res) {
+            ekStepUtil.searchContent(ekStepData, function(err, res) {
 
                 if (err || res.responseCode !== responseCode.SUCCESS) {
                     rspObj.errCode = courseMessage.GET_MY.FAILED_CODE;

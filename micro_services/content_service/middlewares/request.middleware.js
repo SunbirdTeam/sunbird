@@ -4,6 +4,7 @@ var messageUtil = require('../service/messageUtil');
 
 var reqMsg = messageUtil.REQUEST;
 var responseCode = messageUtil.RESPONSE_CODE;
+var apiVersions = messageUtil.API_VERSION;
 
 function createAndValidateRequestBody(req, res, next) {
 
@@ -19,7 +20,7 @@ function createAndValidateRequestBody(req, res, next) {
 
     var rspObj = {
         path: req.body.path,
-        apiVersion: '1.0',
+        apiVersion: apiVersions.V1,
         msgid: req.body.params.msgid,
         result: {}
     };

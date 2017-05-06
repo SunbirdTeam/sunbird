@@ -29,6 +29,6 @@ module.exports = function(app) {
     app.route(BASE_URL_V1 + '/get/:contentId')
         .get(requestMiddleware.createAndValidateRequestBody, courseService.getCourseAPI);
 
-    app.route(BASE_URL_V1 + '/get/mycourse')
-        .post(requestMiddleware.createAndValidateRequestBody, courseService.getMyCourseAPI);
+    app.route(BASE_URL_V1 + '/get/mycourse/:createdBy')
+        .get(requestMiddleware.createAndValidateRequestBody, courseService.getMyCourseAPI);
 };

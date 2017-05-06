@@ -58,3 +58,7 @@ exports.RESPONSE_CODE = {
     SERVER_ERROR: "SERVER_ERROR",
     SUCCESS: "OK"
 };
+
+exports.API_VERSION = {
+    V1: "1.0"
+};
