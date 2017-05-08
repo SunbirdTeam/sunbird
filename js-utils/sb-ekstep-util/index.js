@@ -9,7 +9,8 @@ module.exports={
     reviewContent:ekStepContentUtil.reviewContent,
     publishContent: ekStepContentUtil.publishContent,
     listContent:ekStepContentUtil.listContent,
-    retireContent:ekStepContentUtil.retireContent
+    retireContent:ekStepContentUtil.retireContent,
+    uploadContent:ekStepContentUtil.uploadContent
 };
 
 

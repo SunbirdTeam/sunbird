@@ -23,7 +23,8 @@ getConfig = function (configuration_name) {
         EKSTEP_REVIEW_CONTENT_URI: "/v3/content/review",
         EKSTEP_PUBLISH_CONTENT_URI: "/v2/content/publish",
         EKSTEP_LIST_CONTENT_URI: "/v2/content/list",
-        EKSTEP_RETIRE_CONTENT_URI: "/v2/content"
+        EKSTEP_RETIRE_CONTENT_URI: "/v2/content",
+        EKSTEP_UPLOAD_CONTENT_URI:"/v2/content/upload"
 
     };
     return config_data[configuration_name];
