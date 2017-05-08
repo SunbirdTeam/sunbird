@@ -70,7 +70,8 @@ function searchCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.SEARCH.FAILED_CODE;
                     rspObj.errMsg = courseMessage.SEARCH.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    return response.status(400).send(respUtil.errorResponse(rspObj));
+                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
@@ -119,7 +120,8 @@ function createCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.CREATE.MISSING_CODE;
                     rspObj.errMsg = courseMessage.CREATE.MISSING_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    return response.status(400).send(respUtil.errorResponse(rspObj));
+                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
@@ -163,7 +165,8 @@ function updateCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.UPDATE.FAILED_CODE;
                     rspObj.errMsg = courseMessage.UPDATE.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    return response.status(400).send(respUtil.errorResponse(rspObj));
+                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
@@ -196,7 +199,8 @@ function reviewCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.REVIEW.FAILED_CODE;
                     rspObj.errMsg = courseMessage.REVIEW.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    return response.status(400).send(respUtil.errorResponse(rspObj));
+                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
@@ -228,7 +232,8 @@ function publishCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.PUBLISH.FAILED_CODE;
                     rspObj.errMsg = courseMessage.PUBLISH.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    return response.status(400).send(respUtil.errorResponse(rspObj));
+                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
@@ -268,7 +273,8 @@ function getCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.GET.FAILED_CODE;
                     rspObj.errMsg = courseMessage.GET.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    response.status(400).send(respUtil.errorResponse(rspObj));
+                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
@@ -305,7 +311,8 @@ function getMyCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.GET_MY.FAILED_CODE;
                     rspObj.errMsg = courseMessage.GET_MY.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    return response.status(400).send(respUtil.errorResponse(rspObj));
+                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
