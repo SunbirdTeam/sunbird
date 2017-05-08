@@ -9,6 +9,7 @@ var randomString = require('randomstring');
 var ekStepUtil = require('sb-ekstep-util');
 var respUtil = require('response_util');
 //var LOG = require('sb_logger_util').logger;
+var configUtil = require('sb-config-util')
 var validatorUtil = require('sb_req_validator_util');
 var courseModel = require('../models/courseModel').COURSE;
 var messageUtils = require('./messageUtil');
@@ -17,6 +18,13 @@ var courseMessage = messageUtils.COURSE;
 var responseCode = messageUtils.RESPONSE_CODE;
 
 
+/**
+ * This function help to transform the object body with oldKey and newKey
+ * @param {Object} body
+ * @param {String} oldKey
+ * @param {String} newKey
+ * @returns {nm$_courseService.transformReqResBody.ekStepData}
+ */
 function transformReqResBody(body, oldKey, newKey) {
     var ekStepData = {
         request: {}
@@ -29,22 +37,35 @@ function transformReqResBody(body, oldKey, newKey) {
     }
 }
 
+/**
+ * This function helps to generate code for create content
+ * @returns {String}
+ */
 function getCode() {
-    return 'org.sunbird.' + randomString.generate(6);
-}
-
-function getMimeTypeForCourse() {
-    return "application/vnd.ekstep.content-collection";
-}
-
-function getContentTypeForCourse() {
-    return "Collection";
+    return configUtil.getConfig('PREFIX_CODE') + randomString.generate(6);
 }
 
 /**
- * Wrapper function to search function
+ * This function return the mimeType for create course
+ * @returns {String}
+ */
+function getMimeTypeForCourse() {
+    return configUtil.getConfig('MIME_TYPE_FOR_COURSE');
+}
+
+/**
+ * This function return the contentType for create course
+ * @returns {String}
+ */
+function getContentTypeForCourse() {
+    return configUtil.getConfig('CONTENT_TYPE_FOR_COURSE');
+}
+
+/**
+ * this function helps to search course using ekstep api
  * @param {object} req
  * @param {object} response
+ * @returns {Object} object with error or success response with http status code
  */
 function searchCourseAPI(req, response) {
 
@@ -86,10 +107,10 @@ function searchCourseAPI(req, response) {
 }
 
 /**
- * wrapper function for create course
- * @param {type} req
- * @param {type} response
- * @returns {undefined}
+ * this function helps to create course using ekstep api
+ * @param {Object} req
+ * @param {Object} response
+ * @returns {Object} object with error or success response with http status code
  */
 function createCourseAPI(req, response) {
 
@@ -115,7 +136,6 @@ function createCourseAPI(req, response) {
 
         function(CBW) {
             ekStepUtil.createContent(ekStepData, function(err, res) {
-                //After check response, we perform other operation
                 if (err || res.responseCode !== responseCode.SUCCESS) {
                     rspObj.errCode = courseMessage.CREATE.MISSING_CODE;
                     rspObj.errMsg = courseMessage.CREATE.MISSING_MESSAGE;
@@ -136,7 +156,12 @@ function createCourseAPI(req, response) {
     ]);
 }
 
-
+/**
+ * this function helps to update course using ekstep api
+ * @param {Object} req
+ * @param {Object} response
+ * @returns {Object} object with error or success response with http status code
+ */
 function updateCourseAPI(req, response) {
 
     var data = req.body;
@@ -181,14 +206,21 @@ function updateCourseAPI(req, response) {
     ]);
 }
 
+/**
+ * this function helps to review course using ekstep api
+ * @param {Object} req
+ * @param {Object} response
+ * @returns {Object} object with error or success response with http status code
+ */
 function reviewCourseAPI(req, response) {
 
     var data = {
         body: req.body
     };
+    var rspObj = req.rspObj;
+
     data.contentId = req.params.contentId;
     var ekStepData = { request: data.request };
-    var rspObj = req.rspObj;
 
     async.waterfall([
 
@@ -215,7 +247,12 @@ function reviewCourseAPI(req, response) {
     ]);
 }
 
-
+/**
+ * this function helps to publish course using ekstep api
+ * @param {Object} req
+ * @param {Object} response
+ * @returns {Object} object with error or success response with http status code
+ */
 function publishCourseAPI(req, response) {
 
     var data = {};
@@ -227,7 +264,6 @@ function publishCourseAPI(req, response) {
 
         function(CBW) {
             ekStepUtil.publishContent(data.contentId, function(err, res) {
-                //After check response, we perform other operation
                 if (err || res.responseCode !== responseCode.SUCCESS) {
                     rspObj.errCode = courseMessage.PUBLISH.FAILED_CODE;
                     rspObj.errMsg = courseMessage.PUBLISH.FAILED_MESSAGE;
@@ -249,9 +285,17 @@ function publishCourseAPI(req, response) {
     ]);
 }
 
+/**
+ * this function helps to get course of user
+ * @param {Object} req
+ * @param {Object} response
+ * @returns {Object} object with error or success response with http status code
+ */
 function getCourseAPI(req, response) {
 
     var data = {};
+    var rspObj = req.rspObj;
+
     data.body = req.body;
     data.contentId = req.params.contentId;
 
@@ -262,13 +306,10 @@ function getCourseAPI(req, response) {
         response.status(400).send(respUtil.errorResponse(rspObj));
     }
 
-    var rspObj = req.rspObj;
-
     async.waterfall([
 
         function(CBW) {
             ekStepUtil.getContent(data.contentId, function(err, res) {
-                //After check response, we perform other operation
                 if (err || res.responseCode !== responseCode.SUCCESS) {
                     rspObj.errCode = courseMessage.GET.FAILED_CODE;
                     rspObj.errMsg = courseMessage.GET.FAILED_MESSAGE;
@@ -288,15 +329,21 @@ function getCourseAPI(req, response) {
     ]);
 }
 
+/**
+ * this function helps to get course of user
+ * @param {Object} req
+ * @param {Object} response
+ * @returns {Object} object with error or success response with http status code
+ */
 function getMyCourseAPI(req, response) {
 
     var request = {
-            "filters": {
-                // "createdBy": req.userId  
-                "createdBy": req.params.createdBy,
-                "contentType": getContentTypeForCourse()
-            }
-        
+        "filters": {
+            // "createdBy": req.userId  
+            "createdBy": req.params.createdBy,
+            "contentType": getContentTypeForCourse()
+        }
+
     };
     req.body.request = request;
     var ekStepData = { request: request };

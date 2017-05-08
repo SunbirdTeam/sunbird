@@ -66,7 +66,7 @@ exports.CONTENT = {
         FAILED_CODE: "ERR_CONTENT_UPDATE_FAILED",
         FAILED_MESSAGE: "Update content failed"
     },
-    
+
     UPLOAD: {
         MISSING_CODE: "ERR_CONTENT_UPLOAD_FILES_MISSING",
         MISSING_MESSAGE: "Required files for upload content are missing",

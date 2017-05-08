@@ -6,7 +6,7 @@ module.exports.CONTENT = {
         mimeType: 'required|string',
         contentType: 'required|string'
     },
-    
+
     UPDATE: {
         versionKey: 'required|string'
     }
