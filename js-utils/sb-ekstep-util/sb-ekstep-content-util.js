@@ -1,11 +1,5 @@
 var httpUtil = require('sb-http-util');
 var configUtil = require('sb-config-util');
-<<<<<<< HEAD
-=======
-var multiparty = require('multiparty');
-var fs = require('fs');
-
->>>>>>> 6d8143f27376822936feac063f0d9d85bd8d5cf9
 
 createContent = function (data, cb) {
     var http_options = {
