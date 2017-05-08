@@ -5,6 +5,8 @@
  */
 
 var async = require('async');
+var multiparty = require('multiparty');
+var fs = require('fs');
 var randomString = require('randomstring');
 var ekStepUtil = require('sb-ekstep-util');
 var respUtil = require('response_util');
@@ -123,6 +125,12 @@ function createContentAPI(req, response) {
     ]);
 }
 
+/**
+* This function helps to update content and update course in ekStep course
+ * @param {type} req
+ * @param {type} response
+ * @returns {unresolved}
+ */
 function updateContentAPI(req, response) {
 
     var data = req.body;
@@ -166,38 +174,50 @@ function uploadContentAPI(req, response) {
 
     var data = req.body;
     data.contentId = req.params.contentId;
-
     var rspObj = req.rspObj;
+    
+    var form = new multiparty.Form();
 
-    if (!req.files) {
-        rspObj.errCode = contentMessage.UPLOAD.MISSING_CODE;
-        rspObj.errMsg = contentMessage.UPLOAD.MISSING_MESSAGE;
-        rspObj.responseCode = responseCode.CLIENT_ERROR;
-        return response.status(400).send(respUtil.errorResponse(rspObj));
-    }
-
-    async.waterfall([
-
-        function (CBW) {
-            
-            ekStepUtil.uploadContent(req, data.contentId, function (err, res) {
-                if (err || res.responseCode !== responseCode.SUCCESS) {
-                    rspObj.errCode = contentMessage.UPLOAD.FAILED_CODE;
-                    rspObj.errMsg = contentMessage.UPLOAD.FAILED_MESSAGE;
-                    rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
-                    return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
-                } else {
-                    CBW(null, res);
-                }
-            });
-        },
-
-        function (res) {
-            rspObj.result = res.result;
-            return response.status(200).send(respUtil.successResponse(rspObj));
+    form.parse(req, function (err, fields, files) {
+        if (Object.keys(files).length === 0) {
+            rspObj.errCode = contentMessage.UPLOAD.MISSING_CODE;
+            rspObj.errMsg = contentMessage.UPLOAD.MISSING_MESSAGE;
+            rspObj.responseCode = responseCode.CLIENT_ERROR;
+            return response.status(400).send(respUtil.errorResponse(rspObj));
         }
-    ]);
+    });
+
+    form.on('file', function (name, file) {
+        var formData = {
+            file: {
+                value: fs.createReadStream(file.path),
+                options: {
+                    filename: file.originalFilename
+                }
+            }
+        };
+        async.waterfall([
+
+            function (CBW) {
+
+                ekStepUtil.uploadContent(formData, data.contentId, function (err, res) {
+                    if (err || res.responseCode !== responseCode.SUCCESS) {
+                        rspObj.errCode = contentMessage.UPLOAD.FAILED_CODE;
+                        rspObj.errMsg = contentMessage.UPLOAD.FAILED_MESSAGE;
+                        rspObj.responseCode = res.responseCode;
+                        var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                        return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
+                    } else {
+                        CBW(null, res);
+                    }
+                });
+            },
+            function (res) {
+                rspObj.result = res.result;
+                return response.status(200).send(respUtil.successResponse(rspObj));
+            }
+        ]);
+    });
 }
 
 function reviewContentAPI(req, response) {
@@ -208,7 +228,7 @@ function reviewContentAPI(req, response) {
     data.contentId = req.params.contentId;
     var ekStepData = {request: data.request};
     var rspObj = req.rspObj;
-
+    
     async.waterfall([
 
         function (CBW) {
@@ -225,7 +245,6 @@ function reviewContentAPI(req, response) {
                 }
             });
         },
-
         function (res) {
             rspObj.result.content_id = res.result.node_id;
             rspObj.result.versionKey = res.result.versionKey;
@@ -239,9 +258,7 @@ function publishContentAPI(req, response) {
 
     var data = {};
     data.contentId = req.params.contentId;
-
     var rspObj = req.rspObj;
-
     async.waterfall([
 
         function (CBW) {
@@ -258,7 +275,6 @@ function publishContentAPI(req, response) {
                 }
             });
         },
-
         function (res) {
             rspObj.result.content_id = res.result.node_id;
             rspObj.result.versionKey = res.result.versionKey;
@@ -273,7 +289,6 @@ function getContentAPI(req, response) {
     var data = {};
     data.body = req.body;
     data.contentId = req.params.contentId;
-
     if (!data.contentId) {
         rspObj.errCode = contentMessage.GET.FAILED_CODE;
         rspObj.errMsg = contentMessage.GET.FAILED_MESSAGE;
@@ -282,7 +297,6 @@ function getContentAPI(req, response) {
     }
 
     var rspObj = req.rspObj;
-
     async.waterfall([
 
         function (CBW) {
@@ -299,7 +313,6 @@ function getContentAPI(req, response) {
                 }
             });
         },
-
         function (res) {
             rspObj.result = res.result;
             return response.status(200).send(respUtil.successResponse(rspObj));
@@ -311,7 +324,7 @@ function getMyContentAPI(req, response) {
 
     var request = {
         "filters": {
-            // "createdBy": req.userId  
+// "createdBy": req.userId  
             "createdBy": req.params.createdBy,
             "contentType": getContentTypeForContent()
         }
@@ -320,7 +333,6 @@ function getMyContentAPI(req, response) {
     req.body.request = request;
     var ekStepData = {request: request};
     var rspObj = req.rspObj;
-
     async.waterfall([
 
         function (CBW) {
@@ -337,7 +349,6 @@ function getMyContentAPI(req, response) {
                 }
             });
         },
-
         function (res) {
             rspObj.result = res.result;
             return response.status(200).send(respUtil.successResponse(rspObj));

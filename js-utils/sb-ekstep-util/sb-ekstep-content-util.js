@@ -1,8 +1,5 @@
 var httpUtil = require('sb-http-util');
 var configUtil = require('sb-config-util');
-var multiparty = require('multiparty');
-var fs = require('fs');
-
 
 createContent = function (data, cb) {
     var http_options = {
@@ -131,34 +128,17 @@ retireContent = function (data, content_id, cb) {
         cb(err, body);
     });
 }
-uploadContent = function (req, content_id, cb) {
+uploadContent = function (formData, content_id, cb) {
 
+    var http_options = {
+        url: configUtil.getConfig('EKSTEP_LEARNING_API_URL') + configUtil.getConfig('EKSTEP_UPLOAD_CONTENT_URI') + '/' + content_id,
+        method: "POST",
+        formData: formData,
+        json: true
 
-    var form = new multiparty.Form();
-    form.parse(req, function (err, fields, files) {
-       
-    });
-    form.on('file', function (name, file) {
-        
-        var formData = {
-            file: {
-                value: fs.createReadStream(file.path),
-                options: {
-                    filename: file.originalFilename
-                }
-            }
-        };
-        var http_options = {
-            url: configUtil.getConfig('EKSTEP_LEARNING_API_URL') + configUtil.getConfig('EKSTEP_UPLOAD_CONTENT_URI') + '/' + content_id,
-            method: "POST",
-            formData: formData,
-            json: true
-
-        };
-        httpUtil.sendRequest(http_options, function (err, resp, body) {            
-            cb(err, body);
-        });
-
+    };
+    httpUtil.sendRequest(http_options, function (err, resp, body) {
+        cb(err, body);
     });
 }
 
