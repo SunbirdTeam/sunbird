@@ -75,12 +75,11 @@ function searchContentAPI(req, response) {
         },
 
         function(res) {
+            rspObj.result = res.result;
             if (res.result.content) {
-                rspObj.result = res.result.content.filter(function(obj) {
+                rspObj.result.content = res.result.content.filter(function(obj) {
                     return (obj.contentType !== getContentTypeForContent() && obj.mimeType !== getMimeTypeForContent());
                 });
-            } else {
-                rspObj.result = res.result;
             }
             return response.status(200).send(respUtil.successResponse(rspObj));
         }

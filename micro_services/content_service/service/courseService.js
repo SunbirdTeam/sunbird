@@ -9,7 +9,7 @@ var randomString = require('randomstring');
 var ekStepUtil = require('sb-ekstep-util');
 var respUtil = require('response_util');
 //var LOG = require('sb_logger_util').logger;
-var configUtil = require('sb-config-util')
+var configUtil = require('sb-config-util');
 var validatorUtil = require('sb_req_validator_util');
 var courseModel = require('../models/courseModel').COURSE;
 var messageUtils = require('./messageUtil');
@@ -23,15 +23,33 @@ var responseCode = messageUtils.RESPONSE_CODE;
  * @param {Object} body
  * @param {String} oldKey
  * @param {String} newKey
- * @returns {nm$_courseService.transformReqResBody.ekStepData}
+ * @returns {nm$_courseService.transformReqBody.ekStepData}
  */
-function transformReqResBody(body, oldKey, newKey) {
+function transformReqBody(body, oldKey, newKey) {
     var ekStepData = {
         request: {}
     };
     for (var key in body) {
         if (key === oldKey) {
             ekStepData.request[newKey] = body[oldKey];
+            return ekStepData;
+        }
+    }
+}
+
+/**
+ * This function help to transform the object body with oldKey and newKey
+ * @param {Object} body
+ * @param {String} oldKey
+ * @param {String} newKey
+ * @returns {nm$_courseService.transformReqBody.ekStepData}
+ */
+function transformResBody(body, oldKey, newKey) {
+    var ekStepData = body;
+    for (var key in body) {
+        if (key === oldKey) {
+            ekStepData[newKey] = body[oldKey];
+            delete ekStepData[oldKey];
             return ekStepData;
         }
     }
@@ -100,7 +118,7 @@ function searchCourseAPI(req, response) {
         },
 
         function(res) {
-            rspObj.result = res.result;
+            rspObj.result = transformResBody(res.result, 'content', 'course');
             return response.status(200).send(respUtil.successResponse(rspObj));
         }
     ]);
@@ -130,7 +148,7 @@ function createCourseAPI(req, response) {
     data.request.course.mimeType = getMimeTypeForCourse();
     data.request.course.contentType = getContentTypeForCourse();
 
-    var ekStepData = transformReqResBody(data.request, 'course', 'content');
+    var ekStepData = transformReqBody(data.request, 'course', 'content');
 
     async.waterfall([
 
@@ -180,7 +198,7 @@ function updateCourseAPI(req, response) {
     delete data.request.course['mimeType'];
     delete data.request.course['contentType'];
 
-    var ekStepData = transformReqResBody(data.request, 'course', 'content');
+    var ekStepData = transformReqBody(data.request, 'course', 'content');
 
     async.waterfall([
 
@@ -323,7 +341,7 @@ function getCourseAPI(req, response) {
         },
 
         function(res) {
-            rspObj.result = transformReqResBody(res.result, 'content', 'course');
+            rspObj.result = transformResBody(res.result, 'content', 'course');
             return response.status(200).send(respUtil.successResponse(rspObj));
         }
     ]);
@@ -367,7 +385,7 @@ function getMyCourseAPI(req, response) {
         },
 
         function(res) {
-            rspObj.result = res.result;
+            rspObj.result = transformResBody(res.result, 'content', 'course');
             return response.status(200).send(respUtil.successResponse(rspObj));
         }
     ]);

@@ -51,7 +51,7 @@ getContent = function (content_id, cb) {
 reviewContent = function (data, content_id, cb) {
 
     var url = configUtil.getConfig('EKSTEP_LEARNING_API_URL') + configUtil.getConfig('EKSTEP_REVIEW_CONTENT_URI') + "/" + content_id;
-    var options = getHttpOptions(url, null, "POST", false);
+    var options = getHttpOptions(url, data, "POST", false);
     sendRequest(options, cb);
 };
 
@@ -83,6 +83,7 @@ uploadContent = function (formData, content_id, cb) {
 
 function sendRequest(http_options, cb) {
     httpUtil.sendRequest(http_options, function (err, resp, body) {
+        cb(err, body);
     });
 }
 
