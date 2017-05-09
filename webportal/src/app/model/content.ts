@@ -1,0 +1,33 @@
+export class content {
+    code: string;
+    downloadUrl: string;
+    description: string;
+    language: any;
+    mimeType: string;
+    idealScreenSize: string;
+    createdOn: string;
+    objectType: string;
+    artifactUrl: string;
+    lastUpdatedOn: string;
+    contentType: string;
+    identifier: string;
+    IL_SYS_NODE_TYPE: string;
+    os: any;
+    visibility: string;
+    mediaType: string;
+    osId: string;
+    graph_id: string;
+    nodeType: string;
+    versionKey: string;
+    idealScreenDensity: string;
+    s3Key: string;
+    size: number;
+    createdBy: string;
+    compatibilityLevel: number;
+    IL_FUNC_OBJECT_TYPE: string;
+    name: string;
+    IL_UNIQUE_ID: string;
+    status: string;
+    node_id: number;
+    es_metadata_id: string
+}
