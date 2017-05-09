@@ -10,8 +10,8 @@ var fs = require('fs');
 var randomString = require('randomstring');
 var ekStepUtil = require('sb-ekstep-util');
 var respUtil = require('response_util');
-var configUtil = require('sb-config-util')
-//var LOG = require('sb_logger_util').logger;
+var configUtil = require('sb-config-util');
+var LOG = require('sb_logger_util').logger;
 var validatorUtil = require('sb_req_validator_util');
 var contentModel = require('../models/contentModel').CONTENT;
 var messageUtils = require('./messageUtil');
@@ -55,7 +55,7 @@ function searchContentAPI(req, response) {
         rspObj.responseCode = responseCode.CLIENT_ERROR;
         return response.status(400).send(respUtil.errorResponse(rspObj));
     }
-
+    
     var ekStepData = { request: data.request };
 
     async.waterfall([
@@ -66,7 +66,7 @@ function searchContentAPI(req, response) {
                     rspObj.errCode = contentMessage.SEARCH.FAILED_CODE;
                     rspObj.errMsg = contentMessage.SEARCH.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -117,7 +117,7 @@ function createContentAPI(req, response) {
                     rspObj.errCode = contentMessage.CREATE.MISSING_CODE;
                     rspObj.errMsg = contentMessage.CREATE.MISSING_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -163,7 +163,8 @@ function updateContentAPI(req, response) {
                     rspObj.errCode = contentMessage.UPDATE.FAILED_CODE;
                     rspObj.errMsg = contentMessage.UPDATE.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    return response.status(400).send(respUtil.errorResponse(rspObj));
+                    var httpStatus = res.statusCode || 400;
+                    return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
                 }
@@ -213,7 +214,7 @@ function uploadContentAPI(req, response) {
                         rspObj.errCode = contentMessage.UPLOAD.FAILED_CODE;
                         rspObj.errMsg = contentMessage.UPLOAD.FAILED_MESSAGE;
                         rspObj.responseCode = res.responseCode;
-                        var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                        var httpStatus = res.statusCode || 400;
                         return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                     } else {
                         CBW(null, res);
@@ -246,7 +247,7 @@ function reviewContentAPI(req, response) {
                     rspObj.errCode = contentMessage.REVIEW.FAILED_CODE;
                     rspObj.errMsg = contentMessage.REVIEW.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -276,7 +277,7 @@ function publishContentAPI(req, response) {
                     rspObj.errCode = contentMessage.PUBLISH.FAILED_CODE;
                     rspObj.errMsg = contentMessage.PUBLISH.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -314,7 +315,7 @@ function getContentAPI(req, response) {
                     rspObj.errCode = contentMessage.GET.FAILED_CODE;
                     rspObj.errMsg = contentMessage.GET.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -350,7 +351,7 @@ function getMyContentAPI(req, response) {
                     rspObj.errCode = contentMessage.GET_MY.FAILED_CODE;
                     rspObj.errMsg = contentMessage.GET_MY.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);

@@ -83,6 +83,7 @@ uploadContent = function (formData, content_id, cb) {
 
 function sendRequest(http_options, cb) {
     httpUtil.sendRequest(http_options, function (err, resp, body) {
+        body.statusCode = resp.statusCode;
         cb(err, body);
     });
 }

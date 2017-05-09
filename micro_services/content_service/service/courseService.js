@@ -8,7 +8,7 @@ var async = require('async');
 var randomString = require('randomstring');
 var ekStepUtil = require('sb-ekstep-util');
 var respUtil = require('response_util');
-//var LOG = require('sb_logger_util').logger;
+var LOG = require('sb_logger_util').logger;
 var configUtil = require('sb-config-util');
 var validatorUtil = require('sb_req_validator_util');
 var courseModel = require('../models/courseModel').COURSE;
@@ -96,7 +96,7 @@ function searchCourseAPI(req, response) {
         rspObj.responseCode = responseCode.CLIENT_ERROR;
         return response.status(400).send(respUtil.errorResponse(rspObj));
     }
-
+    
     data.request.filters.contentType = getContentTypeForCourse();
     var ekStepData = { request: data.request };
 
@@ -109,7 +109,7 @@ function searchCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.SEARCH.FAILED_CODE;
                     rspObj.errMsg = courseMessage.SEARCH.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -158,7 +158,7 @@ function createCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.CREATE.MISSING_CODE;
                     rspObj.errMsg = courseMessage.CREATE.MISSING_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -208,7 +208,7 @@ function updateCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.UPDATE.FAILED_CODE;
                     rspObj.errMsg = courseMessage.UPDATE.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -244,12 +244,11 @@ function reviewCourseAPI(req, response) {
 
         function(CBW) {
             ekStepUtil.reviewContent(ekStepData, data.contentId, function(err, res) {
-                //After check response, we perform other operation
                 if (err || res.responseCode !== responseCode.SUCCESS) {
                     rspObj.errCode = courseMessage.REVIEW.FAILED_CODE;
                     rspObj.errMsg = courseMessage.REVIEW.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -286,7 +285,7 @@ function publishCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.PUBLISH.FAILED_CODE;
                     rspObj.errMsg = courseMessage.PUBLISH.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -316,7 +315,7 @@ function getCourseAPI(req, response) {
 
     data.body = req.body;
     data.contentId = req.params.contentId;
-
+    
     if (!data.contentId) {
         rspObj.errCode = courseMessage.GET.FAILED_CODE;
         rspObj.errMsg = courseMessage.GET.FAILED_MESSAGE;
@@ -332,7 +331,7 @@ function getCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.GET.FAILED_CODE;
                     rspObj.errMsg = courseMessage.GET.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
@@ -376,7 +375,7 @@ function getMyCourseAPI(req, response) {
                     rspObj.errCode = courseMessage.GET_MY.FAILED_CODE;
                     rspObj.errMsg = courseMessage.GET_MY.FAILED_MESSAGE;
                     rspObj.responseCode = res.responseCode;
-                    var httpStatus = (res.responseCode === responseCode.RESOURSE_NOT_FOUND) ? 404 : 400;
+                    var httpStatus = res.statusCode || 400;
                     return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
                 } else {
                     CBW(null, res);
