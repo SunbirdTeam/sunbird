@@ -68,7 +68,7 @@ function getCode() {
  * @returns {String}
  */
 function getMimeTypeForCourse() {
-    return configUtil.getConfig('MIME_TYPE_FOR_COURSE');
+    return courseMessage.MIME_TYPE;
 }
 
 /**
@@ -76,7 +76,7 @@ function getMimeTypeForCourse() {
  * @returns {String}
  */
 function getContentTypeForCourse() {
-    return configUtil.getConfig('CONTENT_TYPE_FOR_COURSE');
+    return courseMessage.CONTENT_TYPE;
 }
 
 /**
@@ -96,10 +96,10 @@ function searchCourseAPI(req, response) {
         rspObj.responseCode = responseCode.CLIENT_ERROR;
         return response.status(400).send(respUtil.errorResponse(rspObj));
     }
-    
+
     data.request.filters.contentType = getContentTypeForCourse();
     var ekStepData = { request: data.request };
-
+    
     async.waterfall([
 
         function(CBW) {
@@ -315,7 +315,7 @@ function getCourseAPI(req, response) {
 
     data.body = req.body;
     data.contentId = req.params.contentId;
-    
+
     if (!data.contentId) {
         rspObj.errCode = courseMessage.GET.FAILED_CODE;
         rspObj.errMsg = courseMessage.GET.FAILED_MESSAGE;
