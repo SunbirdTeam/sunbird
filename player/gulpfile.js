@@ -215,7 +215,7 @@ gulp.task('semantic', function() {
 });
 
 gulp.task('build', ['clean:dist'], function () {
-  runSequence(['images', 'copy:extras', 'copy:fonts']);
+  runSequence(['images', 'copy:extras', 'copy:fonts', 'client:build', 'semantic']);
 });
 
 
