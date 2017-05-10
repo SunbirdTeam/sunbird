@@ -2,13 +2,13 @@
 
 /**
  * @ngdoc function
- * @name studioApp.controller:AboutCtrl
+ * @name studioApp.controller:CourseCtrl
  * @description
- * # AboutCtrl
+ * # CourseCtrl
  * Controller of the studioApp
  */
 angular.module('studioApp')
-  .controller('AboutCtrl', function () {
+  .controller('CourseCtrl', function () {
     this.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',
