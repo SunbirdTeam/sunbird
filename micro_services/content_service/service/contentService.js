@@ -32,7 +32,7 @@ function getCode() {
  * @returns {String}
  */
 function getMimeTypeForContent() {
-    return configUtil.getConfig('MIME_TYPE_FOR_COURSE');
+    return contentMessage.MIME_TYPE;
 }
 
 /**
@@ -40,7 +40,7 @@ function getMimeTypeForContent() {
  * @returns {String}
  */
 function getContentTypeForContent() {
-    return configUtil.getConfig('CONTENT_TYPE_FOR_COURSE');
+    return contentMessage.CONTENT_TYPE;
 }
 
 
@@ -56,6 +56,13 @@ function searchContentAPI(req, response) {
         return response.status(400).send(respUtil.errorResponse(rspObj));
     }
     
+    if(!data.request.filters.contentType) {
+        data.request.filters.contentType = getContentTypeForContent();
+    }
+    if(!data.request.filters.mimeType) {
+        data.request.filters.mimeType = getMimeTypeForContent();
+    }
+
     var ekStepData = { request: data.request };
 
     async.waterfall([
@@ -76,11 +83,6 @@ function searchContentAPI(req, response) {
 
         function(res) {
             rspObj.result = res.result;
-            if (res.result.content) {
-                rspObj.result.content = res.result.content.filter(function(obj) {
-                    return (obj.contentType !== getContentTypeForContent() && obj.mimeType !== getMimeTypeForContent());
-                });
-            }
             return response.status(200).send(respUtil.successResponse(rspObj));
         }
     ]);
@@ -335,7 +337,8 @@ function getMyContentAPI(req, response) {
         "filters": {
             // "createdBy": req.userId  
             "createdBy": req.params.createdBy,
-            "contentType": getContentTypeForContent()
+            "contentType": getContentTypeForContent(),
+            "mimeType": getMimeTypeForContent()
         }
 
     };
