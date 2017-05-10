@@ -81,6 +81,12 @@ uploadContent = function (formData, content_id, cb) {
     sendRequest(options, cb);
 };
 
+contentHierarchy = function (content_id, cb) {
+    var url = configUtil.getConfig('EKSTEP_LEARNING_API_URL') + configUtil.getConfig('EKSTEP_HIERARCHY_CONTENT_URI') + '/' + content_id;
+    var options = getHttpOptions(url, null, "GET", false);
+    sendRequest(options, cb);
+};
+
 function sendRequest(http_options, cb) {
     httpUtil.sendRequest(http_options, function (err, resp, body) {
         body.statusCode = resp.statusCode;
@@ -97,6 +103,7 @@ module.exports = {
     uploadContent: uploadContent,
     publishContent: publishContent,
     listContent: listContent,
-    retireContent: retireContent
+    retireContent: retireContent,
+    contentHierarchy: contentHierarchy
 
 };

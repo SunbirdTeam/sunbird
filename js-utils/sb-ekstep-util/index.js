@@ -10,7 +10,8 @@ module.exports={
     publishContent: ekStepContentUtil.publishContent,
     listContent:ekStepContentUtil.listContent,
     retireContent:ekStepContentUtil.retireContent,
-    uploadContent:ekStepContentUtil.uploadContent
+    uploadContent:ekStepContentUtil.uploadContent,
+    contentHierarchy:ekStepContentUtil.contentHierarchy
 };
 
 
