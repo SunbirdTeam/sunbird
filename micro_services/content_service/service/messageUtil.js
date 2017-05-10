@@ -41,7 +41,10 @@ exports.COURSE = {
     GET_MY: {
         FAILED_CODE: "ERR_COURSE_GET_MY_FAILED",
         FAILED_MESSAGE: "Get my course failed"
-    }
+    },
+
+    MIME_TYPE: "application/vnd.ekstep.content-collection",
+    CONTENT_TYPE: "Collection"
 };
 
 exports.CONTENT = {
@@ -94,7 +97,57 @@ exports.CONTENT = {
     GET_MY: {
         FAILED_CODE: "ERR_CONTENT_GET_MY_FAILED",
         FAILED_MESSAGE: "Get my content failed"
-    }
+    },
+
+    CONTENT_TYPE: [
+        "Story",
+        "Worksheet",
+        "Game",
+        "Simulation",
+        "Puzzle",
+        "Diagnostic",
+        "Asset",
+        "Template",
+        "Plugin",
+        "ContentTemplate",
+        "ItemTemplate",
+        "TextBook",
+        "TextBookUnit"
+    ],
+
+    MIME_TYPE: [
+        "application/vnd.ekstep.ecml-archive",
+        "application/vnd.ekstep.html-archive",
+        "application/vnd.android.package-archive",
+        "application/vnd.ekstep.content-archive",
+        "application/vnd.ekstep.plugin-archive",
+        "application/octet-stream",
+        "application/msword",
+        "application/pdf",
+        "video/youtube",
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/tiff",
+        "image/bmp",
+        "image/gif",
+        "image/svg+xml",
+        "video/avi",
+        "video/mpeg",
+        "video/quicktime",
+        "video/3gpp",
+        "video/mpeg",
+        "video/mp4",
+        "video/ogg",
+        "video/webm",
+        "audio/mp3",
+        "audio/mp4",
+        "audio/mpeg",
+        "audio/ogg",
+        "audio/webm",
+        "audio/x-wav",
+        "audio/wav"
+    ]
 };
 
 exports.REQUEST = {
