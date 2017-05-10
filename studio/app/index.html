@@ -13,15 +13,18 @@
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="thirdparty/semantic/styles/semantic.min.css">
+    <link rel="stylesheet" href="thirdparty/bower_components/angular-ui-tree/dist/angular-ui-tree.min.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="playerApp">
+  <body ng-app="studioApp">
     <!--[if lte IE 8]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
     <!-- Add your site or application content here -->
 
+    
+    <div ng-include="'views/common/top_header.html'"></div>
     <div ng-view=""></div>
     <div class="footer">
       
@@ -46,6 +49,7 @@
     <script src="thirdparty/bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="thirdparty/bower_components/angular-route/angular-route.js"></script>
     <script src="thirdparty/semantic/semantic.min.js"></script>
+    <script src="thirdparty/bower_components/angular-ui-tree/dist/angular-ui-tree.min.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -53,6 +57,10 @@
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/controllers/about.js"></script>
+        <script src="scripts/services/httpservice.js"></script>
+        <script src="scripts/services/studioconstant.js"></script>
+        <script src="scripts/services/courseservice.js"></script>
+        <script src="scripts/controllers/coursecontroller.js"></script>
         <!-- endbuild -->
 </body>
 </html>

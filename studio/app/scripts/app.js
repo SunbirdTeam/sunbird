@@ -2,16 +2,17 @@
 
 /**
  * @ngdoc overview
- * @name playerApp
+ * @name studioApp
  * @description
- * # playerApp
+ * # studioApp
  *
  * Main module of the application.
  */
 angular
-  .module('playerApp', [
+  .module('studioApp', [
     'ngCookies',
-    'ngRoute'
+    'ngRoute',
+    'ui.tree'
   ])
   .config(function ($routeProvider) {
     $routeProvider
