@@ -10,12 +10,17 @@
 angular.module('studioApp')
         .controller('CourseCtrl', function (courseService, $log, $scope, contentService) {
             var vm = this;
-            var req = {
+            var reqForHierarchy = {
                 courseId: "do_11219206596520345611"
             };
+
+            vm.reqForSearch = {
+                filters: {}
+            };
+
             vm.name = "Content";
-            
-            courseService.getHierarchy(req).then(function (res) {
+
+            courseService.getHierarchy(reqForHierarchy).then(function (res) {
                 if (res.responseCode === "OK") {
                     vm.data = res.result.content;
                 }
@@ -23,14 +28,6 @@ angular.module('studioApp')
                 $log.warn(errorMessage);
             };
 
-            vm.collapseAll = function () {
-                vm.$broadcast('angular-ui-tree:collapse-all');
-            };
-
-            vm.expandAll = function () {
-                vm.$broadcast('angular-ui-tree:expand-all');
-            };
-            
             vm.remove = function (scope) {
                 scope.remove();
             };
@@ -43,24 +40,18 @@ angular.module('studioApp')
                 var a = vm.data.pop();
                 vm.data.splice(0, 0, a);
             };
+
+            function searchContent(request) {
+
+            }
             vm.newSubItem = function (scope) {
-                var nodeData = scope.$modelValue;
-                nodeData.children.push({
-                    id: nodeData.id * 10 + nodeData.children.length,
-                    name: nodeData.oldtitle + '.' + (nodeData.children.length + 1),
-                    children: []
-                });
-            };
+                $scope.showSearchTemplate = true;
 
-            vm.request = {
-                filters: {}
-            };
-
-            $scope.getContent = function (query) {
-
-                vm.request.query = query;
-                contentService.search(vm.request).then(function (response) {
-                    if(response.responseCode === "OK" && response.result.count > 0) {
+                vm.addScope = scope;
+                var request = vm.reqForSearch;
+                request.limit = 30;
+                contentService.search(request).then(function (response) {
+                    if (response.responseCode === "OK" && response.result.count > 0) {
                         $scope.contentList = response.result.content;
                     } else {
                         $scope.showNoContentFound = true;
@@ -70,7 +61,32 @@ angular.module('studioApp')
                 };
             };
 
-            $scope.loadRating = function() {
+            $scope.getContent = function (query) {
+                
+                var request = vm.reqForSearch;
+                request.request.query = query;
+                contentService.search(vm.request).then(function (response) {
+                    if (response.responseCode === "OK" && response.result.count > 0) {
+                        $scope.contentList = response.result.content;
+                    } else {
+                        $scope.showNoContentFound = true;
+                    }
+                }), function (errorMessage) {
+                    $log.warn(errorMessage);
+                };
+            };
+            
+            $scope.addContent = function(data) {
+                
+                var nodeData = vm.addScope.$modelValue;
+//                data.id = nodeData.id * 10 + nodeData.children.length;
+                data.children = [];
+                console.log(nodeData);
+                console.log(data);
+                nodeData.children.push(data);
+            };
+
+            $scope.loadRating = function () {
                 $('.ui.rating')
                         .rating({
                             maxRating: 5
