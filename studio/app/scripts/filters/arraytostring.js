@@ -11,6 +11,6 @@
 angular.module('studioApp')
   .filter('arrayToString', function () {
     return function (input) {
-      return 'arrayToString filter: ' + input;
+      return input.toString();
     };
   });
