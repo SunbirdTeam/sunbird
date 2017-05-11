@@ -19,16 +19,13 @@ angular.module('playerApp')
     var req = {
       "request": {
         "filters": {
-
-          "name": "Test Content with ekStep_utils"
+         "name": "Test Content with ekStep_utils"
         }
       },
       "params": {
         "cid": "12"
       }
     }
-
-    // vm.name = "Anuj";
 
     contentService.getSearchContent(req).then(function (res) {
       console.log(res);
@@ -40,57 +37,5 @@ angular.module('playerApp')
       $log.warn(errorMessage);
     };
 
-    //     vm.data = [
-    //   {
-    //     "id": 1,
-    //     "title": "node1",
-    //     "nodes": [
-    //       {
-    //         "id": 11,
-    //         "title": "node1.1",
-    //         "nodes": [
-    //           {
-    //             "id": 111,
-    //             "title": "node1.1.1",
-    //             "nodes": []
-    //           }
-    //         ]
-    //       },
-    //       {
-    //         "id": 12,
-    //         "title": "node1.2",
-    //         "nodes": []
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     "id": 2,
-    //     "title": "node2",
-    //     "nodrop": true,
-    //     "nodes": [
-    //       {
-    //         "id": 21,
-    //         "title": "node2.1",
-    //         "nodes": []
-    //       },
-    //       {
-    //         "id": 22,
-    //         "title": "node2.2",
-    //         "nodes": []
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     "id": 3,
-    //     "title": "node3",
-    //     "nodes": [
-    //       {
-    //         "id": 31,
-    //         "title": "node3.1",
-    //         "nodes": []
-    //       }
-    //     ]
-    //   }
-    // ];
-
+   
   });
