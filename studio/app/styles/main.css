@@ -1,4 +1,12 @@
 .header-container{
   margin-left: 1px !important;
-  border-bottom: 3px solid #0099CC !important;
+  border-bottom: 5px solid #0099CC !important;
+}
+.toc-tree-container{
+    border-right: 1px solid #DDD;
+    margin-top: 15px;
+    padding: 50px !important;
+}
+.toc-tree-header{
+  margin-left: -15px !important;
 }
