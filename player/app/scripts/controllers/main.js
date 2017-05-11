@@ -8,34 +8,49 @@
  * Controller of the playerApp
  */
 angular.module('playerApp')
-  .controller('MainCtrl', function (contentService, $log) {
+  .controller('MainCtrl', function (contentService, $log,  $scope) {
     var vm = this;
     vm.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',
       'Karma'
     ];
+    getContent();
 
-    var req = {
-      "request": {
-        "filters": {
-         "name": "Test Content with ekStep_utils"
-        }
-      },
-      "params": {
-        "cid": "12"
-      }
-    }
 
-    contentService.getSearchContent(req).then(function (res) {
-      console.log(res);
-      if (res.responseCode === "OK") {
-        vm.data = res.result;
-        console.log(res.result);
-      }
-    }), function (errorMessage) {
-      $log.warn(errorMessage);
-    };
+    // contentService.getSearchContent(req).then(function (res) {
+    //   console.log('search response', res.result.content);
+    //   if (res.responseCode === "OK") {
+    //     vm.data = res.result.content;
+    //   }
+    // }), function (errorMessage) {
+    //   $log.warn(errorMessage);
+    // }
 
-   
+    function getContent(req) {
+                var req = {
+                  query : "test",
+                  filters : {
+
+                  }
+                }
+                contentService.search(req).then(function (response) {
+                    if(response.responseCode === "OK" && response.result.count > 0) {
+                        $scope.contentList = response.result.content;
+                        console.log(' $scope.contentList', $scope.contentList);
+                    } else {
+                        $scope.showNoContentFound = true;
+                    }
+                }), function (errorMessage) {
+                    $log.warn(errorMessage);
+                };
+            };
+
+            $scope.loadRating = function() {
+                $('.ui.rating')
+                        .rating({
+                            maxRating: 5
+                        })
+                        .rating("disable", true);
+            };
   });
