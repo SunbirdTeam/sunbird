@@ -11,7 +11,7 @@ describe('Service: httpService', function () {
     httpService = _httpService_;
   }));
 
-  it('should do something', function () {
+  xit('should do something', function () {
     expect(!!httpService).toBe(true);
   });
 
