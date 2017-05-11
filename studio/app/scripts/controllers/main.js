@@ -20,69 +20,100 @@ angular.module('studioApp')
                 courseId: "do_11219206596520345611"
             };
 
-            vm.name = "Anuj";
+            vm.name = "Content";
 
-//            courseService.getHierarchy(req).then(function (res) {
-//                if (res.responseCode === "OK") {
-//                    vm.data = res.result;
-//                    console.log(res.result);
+            courseService.getHierarchy(req).then(function (res) {
+                if (res.responseCode === "OK") {
+                    vm.data = res.result.content;
+                    console.log(res.result);
+                }
+            }), function (errorMessage) {
+                $log.warn(errorMessage);
+            };
+
+            vm.collapseAll = function () {
+                vm.$broadcast('angular-ui-tree:collapse-all');
+            };
+
+            vm.expandAll = function () {
+                vm.$broadcast('angular-ui-tree:expand-all');
+            };
+            vm.remove = function (scope) {
+//        getLevelMenu(scope.$modelValue.level, "remove");
+                scope.remove();
+            };
+
+            vm.toggle = function (scope) {
+                scope.toggle();
+            };
+
+            vm.moveLastToTheBeginning = function () {
+                var a = vm.data.pop();
+                vm.data.splice(0, 0, a);
+            };
+            vm.newSubItem = function (scope) {
+                var nodeData = scope.$modelValue;
+                nodeData.children.push({
+                    id: nodeData.id * 10 + nodeData.children.length,
+                    name: nodeData.oldtitle + '.' + (nodeData.children.length + 1),
+                    children: []
+                });
+            };
+//            vm.data = {};
+//            vm.data.name = "Course name"
+//
+//            vm.data.children = [
+//                {
+//                    "id": 1,
+//                    "name": "node1",
+//                    "children": [
+//                        {
+//                            "id": 11,
+//                            "name": "node1.1",
+//                            "children": [
+//                                {
+//                                    "id": 111,
+//                                    "name": "node1.1.1",
+//                                    "children": []
+//                                }
+//                            ]
+//                        },
+//                        {
+//                            "id": 12,
+//                            "name": "node1.2",
+//                            "children": []
+//                        }
+//                    ]
+//                },
+//                {
+//                    "id": 2,
+//                    "name": "node2",
+//                    "nodrop": true,
+//                    "children": [
+//                        {
+//                            "id": 21,
+//                            "name": "node2.1",
+//                            "children": []
+//                        },
+//                        {
+//                            "id": 22,
+//                            "name": "node2.2",
+//                            "children": []
+//                        }
+//                    ]
+//                },
+//                {
+//                    "id": 3,
+//                    "name": "node3",
+//                    "children": [
+//                        {
+//                            "id": 31,
+//                            "name": "node3.1",
+//                            "children": []
+//                        }
+//                    ]
 //                }
-//            }), function (errorMessage) {
-//                $log.warn(errorMessage);
-//            };
-
-    vm.data = [
-  {
-    "id": 1,
-    "title": "node1",
-    "nodes": [
-      {
-        "id": 11,
-        "title": "node1.1",
-        "nodes": [
-          {
-            "id": 111,
-            "title": "node1.1.1",
-            "nodes": []
-          }
-        ]
-      },
-      {
-        "id": 12,
-        "title": "node1.2",
-        "nodes": []
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "title": "node2",
-    "nodrop": true,
-    "nodes": [
-      {
-        "id": 21,
-        "title": "node2.1",
-        "nodes": []
-      },
-      {
-        "id": 22,
-        "title": "node2.2",
-        "nodes": []
-      }
-    ]
-  },
-  {
-    "id": 3,
-    "title": "node3",
-    "nodes": [
-      {
-        "id": 31,
-        "title": "node3.1",
-        "nodes": []
-      }
-    ]
-  }
-];
+//            ];
 
         });
 
