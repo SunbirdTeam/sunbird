@@ -2,28 +2,24 @@
 
 /**
  * @ngdoc overview
- * @name playerApp
+ * @name studioApp
  * @description
- * # playerApp
+ * # studioApp
  *
  * Main module of the application.
  */
 angular
-  .module('playerApp', [
+  .module('studioApp', [
     'ngCookies',
-    'ngRoute'
+    'ngRoute',
+    'ui.tree'
   ])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl',
-        controllerAs: 'main'
-      })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl',
-        controllerAs: 'about'
+        templateUrl: 'views/course/update.html',
+        controller: 'CourseCtrl',
+        controllerAs: 'course'
       })
       .otherwise({
         redirectTo: '/'
