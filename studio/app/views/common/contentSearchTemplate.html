@@ -1,0 +1,65 @@
+<div class="ui large active">
+    <div class="header">
+        <div class="ui two column grid">
+            <div class="row">
+                <div class="column">
+                    <span><i class="icon-activity icon"></i> Course Browser</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="activity-filters-container">
+        <div class="ui form">
+            <div class="field">
+                <div class="ui fluid icon input">
+                    <input ng-model="searchQuery" placeholder="Search for content" 
+                           ng-keypress="$event.keyCode === 13 ? getContent(this.searchQuery) : null" type="text" 
+                           class="ng-pristine ng-valid ng-empty ng-touched">
+                    <i class="inverted circular search link icon" ng-click="getContent(this.searchQuery)"></i>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="content activity-browser-content">
+        <div class="ui five stackable special cards activity-browser-cards" ng-show="activitiesList.length > 0">
+            <div class="ui link card ng-scope" ng-repeat=" activity in activitiesList track by $index" >
+                <div class="ui card">
+                    <div class="content">
+                        <span class="row"> {{activity.name}}</span>
+                        <span class="stackable two column grid">
+                            <span class="four wide column"> {{activity.contentType}}</span>
+                            <span >|</span>
+                            <span class="four wide column"> {{activity.status}}</span>
+                        </span>
+                    </div>
+                    <div ng-if="activity.appIcon" class="image">
+                        <img ng-src="{{activity.appIcon}}">
+                    </div>
+                    <div ng-if="!activity.appIcon" class="image">
+                        <img src="images/logo.png">
+                    </div>
+                    <div class="content">
+                        <div><span>{{activity.language || arrayToString}}</span></div>
+                        <div class="ui star rating" data-rating={{activity.me_averageRating}}></div>
+                    </div>
+                    <div class="content">
+                        <div><span>{{activity.description || "No Description"}}</span></div>
+                    </div>
+
+                  <div class="extra content">
+                      <span>Last updated on: {{activity.lastUpdatedOn}}</span>
+                        <span class="ui large transparent left icon">
+                            <i class="user circular icon"></i>
+                        </span>
+                        <span>{{activity.owner}}</span>
+                        <button class="right large" type="button" name="Add">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui huge info message activity-browser-center ng-hide" ng-show="noActivities">
+            <p>No activities found.</p>
+        </div>
+    </div>
+</div>
