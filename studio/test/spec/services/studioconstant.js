@@ -11,7 +11,7 @@ describe('Service: studioConstant', function () {
     studioConstant = _studioConstant_;
   }));
 
-  it('should do something', function () {
+  xit('should do something', function () {
     expect(!!studioConstant).toBe(true);
   });
 
