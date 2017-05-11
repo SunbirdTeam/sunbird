@@ -25,8 +25,8 @@
 <div class="ui stackable two column grid full-height">
 
     <div class="four wide column" style="padding: 30px">
-        <div class="ui header content"><span ng-cloak>{{ main.data.name }}</span></div>
-        
+        <div class="ui header content"><span ng-cloak>{{ main.data.name}}</span></div>
+
         <div class="row">
             <div>
                 <div ui-tree id="tree-root">
@@ -38,6 +38,6 @@
         </div> 
     </div>
     <div class="eight wide column">
-            
+        <div ng-include=" 'views/common/search.template.html'"></div>
     </div>
-</div>
+    </div>

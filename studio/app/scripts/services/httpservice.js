@@ -53,7 +53,7 @@ angular.module('studioApp')
                 method: method,
                 url: url,
                 headers: headers,
-                data: data
+                data: {request : data}
             });
         }
         
