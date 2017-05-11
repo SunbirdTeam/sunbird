@@ -1,24 +1,24 @@
 <div class="course-browser-container">
     <h2 class="ui header">Search Content</h2>
     <div>
-    <div class="ui form">
-        <div class="field">
-            <div class="ui fluid icon input">
-                <input ng-model="searchQuery" placeholder="Search for content" ng-keypress="$event.keyCode === 13 ? getContent(this.searchQuery) : null" type="text" />
-                <i class="inverted circular search link icon" ng-click="getContent(this.searchQuery)"></i>
+        <div class="ui form">
+            <div class="field">
+                <div class="ui fluid icon input">
+                    <input ng-model="searchQuery" placeholder="Search for content" ng-keypress="$event.keyCode === 13 ? getContent(this.searchQuery) : null" type="text" />
+                    <i class="inverted circular search link icon" ng-click="getContent(this.searchQuery)"></i>
+                </div>
             </div>
         </div>
-    </div>
     </div>
     <div class="content">
         <div class="ui three stackable cards course-cards" ng-show="contentList.length > 0">
             <div class="ui link card" ng-repeat=" content in contentList track by $index" ng-init="$last && loadRating()">
                 <div class="ui content">
-                    <h4 class="ui header">{{content.name | limitTo:70}}<span ng-if="content.name.length>70">...</span>></h4>
+                    <h4 class="ui header">{{content.name| limitTo:70}}<span ng-if="content.name.length > 70">...</span></h4>
                     <span class="stackable two column grid">
                         <span class="four wide column"> {{content.contentType}}</span>
-                    <span>|</span>
-                    <span class="four wide column"> {{content.status}}</span>
+                        <span>|</span>
+                        <span class="four wide column"> {{content.status}}</span>
 
                     </span>
                 </div>
@@ -33,7 +33,7 @@
                     <div class="ui star rating" data-rating={{content.me_averageRating}}></div>
                 </div>
                 <div class="ui content">
-                    <div><span>{{(content.description | limitTo:100) || "No Description"}}</span><span ng-if="content.description.length > 100">...</span></div>
+                    <div><span>{{(content.description| limitTo:100) || "No Description"}}</span><span ng-if="content.description.length > 100">...</span></div>
 
                 </div>
                 <div class="ui extra content">
@@ -49,8 +49,14 @@
                 </div>
             </div>
         </div>
-        <div class="ui huge info message" ng-show="showNoContentFound">
+        <div class="ui huge info message" ng-if="showNoContentFound">
             <p>No Content found.</p>
         </div>
+    </div>
+    <div class="ui segment" ng-if="!contentList && !showNoContentFound">
+        <div class="ui active inverted dimmer">
+            <div class="ui medium text loader">Loading</div>
+        </div>
+        <p></p>
     </div>
 </div>

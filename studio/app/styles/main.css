@@ -16,3 +16,15 @@
 .course-cards{
     margin-top: 10px !important;
 }
+
+.header-border {
+    border-bottom: 2px solid #ddd !important;
+}
+
+.padding-10 {
+    padding: 10px 10px 21px 20px !important;
+}
+
+.verticalLine {
+  border-left: thin solid #ddd;
+}

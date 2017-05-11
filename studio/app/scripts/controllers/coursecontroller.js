@@ -13,11 +13,6 @@ angular.module('studioApp')
             var reqForHierarchy = {
                 courseId: "do_11219206596520345611"
             };
-
-            vm.reqForSearch = {
-                filters: {}
-            };
-
             vm.name = "Content";
 
             courseService.getHierarchy(reqForHierarchy).then(function (res) {
@@ -48,8 +43,11 @@ angular.module('studioApp')
                 $scope.showSearchTemplate = true;
 
                 vm.addScope = scope;
-                var request = vm.reqForSearch;
-                request.limit = 30;
+                var request = {
+                    filters: {},
+                    limit : 30
+                };
+                $scope.contentList = 0;
                 contentService.search(request).then(function (response) {
                     if (response.responseCode === "OK" && response.result.count > 0) {
                         $scope.contentList = response.result.content;
@@ -63,9 +61,12 @@ angular.module('studioApp')
 
             $scope.getContent = function (query) {
                 
-                var request = vm.reqForSearch;
-                request.request.query = query;
-                contentService.search(vm.request).then(function (response) {
+                var request = {
+                    filters: {},
+                    query : query
+                };  
+                $scope.contentList = 0;
+                contentService.search(request).then(function (response) {
                     if (response.responseCode === "OK" && response.result.count > 0) {
                         $scope.contentList = response.result.content;
                     } else {
