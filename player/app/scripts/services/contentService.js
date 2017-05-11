@@ -15,9 +15,15 @@ angular.module('playerApp')
                 var url = playerConstants.URL.BASE + playerConstants.URL.COURSE.HIERARCHY + '/' + req.courseId;
                 return httpService.getOperation(url, req);
             }
+
+            function getSearchContent(req){
+                var url = playerConstants.URL.BASE + playerConstants.URL.CONTENT.SEARCH;
+                return httpService.postOperation(url, req);
+            }
             
             return{
-                getHierarchy: getHierarchy
+                getHierarchy: getHierarchy,
+                getSearchContent:getSearchContent
             };
 
         });
