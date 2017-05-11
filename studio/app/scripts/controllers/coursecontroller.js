@@ -14,11 +14,10 @@ angular.module('studioApp')
                 courseId: "do_11219206596520345611"
             };
             vm.name = "Content";
-
+            
             courseService.getHierarchy(req).then(function (res) {
                 if (res.responseCode === "OK") {
                     vm.data = res.result.content;
-                    console.log(res.result);
                 }
             }), function (errorMessage) {
                 $log.warn(errorMessage);
@@ -61,14 +60,17 @@ angular.module('studioApp')
 
                 vm.request.query = query;
                 contentService.search(vm.request).then(function (response) {
-                    $scope.activitiesList = response.result.content;
-                    loadRating();
+                    if(response.responseCode === "OK" && response.result.count > 0) {
+                        $scope.contentList = response.result.content;
+                    } else {
+                        $scope.showNoContentFound = true;
+                    }
                 }), function (errorMessage) {
                     $log.warn(errorMessage);
                 };
             };
 
-            function loadRating() {
+            $scope.loadRating = function() {
                 $('.ui.rating')
                         .rating({
                             maxRating: 5
