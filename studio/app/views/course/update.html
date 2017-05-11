@@ -10,10 +10,10 @@
     </a>
 
     <span>{{node.name}}</span>
-    <a class="ui red icon button" style="margin-top:5px;" data-nodrag ng-click="course.remove(this)">
+    <a class="ui red mini icon button" style="margin-top:5px;" data-nodrag ng-click="course.remove(this)">
     <i class="remove icon"></i>
     </a>
-    <a class="ui blue icon button" style="margin-top:5px;" data-nodrag ng-click="course.newSubItem(this)" style="margin-right: 8px;">
+    <a class="ui blue mini icon button" style="margin-top:5px;" data-nodrag ng-click="course.newSubItem(this)" style="margin-right: 8px;">
     <i class="plus icon"></i>
     </a>
     </div>
@@ -25,7 +25,7 @@
 <div class="ui stackable two column grid full-height">
 
     <div class="three wide column toc-tree-container">
-        <div class="ui header content toc-tree-header" ng-cloak>{{ course.data.name}}</div>
+        <h1 class="ui header content toc-tree-header" ng-cloak>{{ course.data.name}}</h1>
 
         <div class="row">
             <div>
