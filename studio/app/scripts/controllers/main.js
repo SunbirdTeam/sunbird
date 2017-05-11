@@ -8,7 +8,7 @@
  * Controller of the studioApp
  */
 angular.module('studioApp')
-        .controller('MainCtrl', function (courseService, $log) {
+        .controller('MainCtrl', function (courseService, $log, $scope, contentService) {
             var vm = this;
             vm.awesomeThings = [
                 'HTML5 Boilerplate',
@@ -59,6 +59,22 @@ angular.module('studioApp')
                     children: []
                 });
             };
+
+            vm.request = {
+                filters: {}
+            };
+
+            $scope.getActivities = function (query) {
+
+                vm.request.query = query;
+                contentService.search(vm.request).then(function (response) {
+                    console.log(response);
+                    $scope.activitiesList = response.result.content;
+                }), function (errorMessage) {
+                    $log.warn(errorMessage);
+                };
+            };
+
 //            vm.data = {};
 //            vm.data.name = "Course name"
 //
