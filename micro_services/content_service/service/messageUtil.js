@@ -42,6 +42,13 @@ exports.COURSE = {
         FAILED_CODE: "ERR_COURSE_GET_MY_FAILED",
         FAILED_MESSAGE: "Get my course failed"
     },
+    
+    HIERARCHY: {
+        MISSING_CODE: "ERR_COURSE_HIERARCHY_FIELDS_MISSING",
+        MISSING_MESSAGE: "Required fields for course hierarchy are missing",
+        FAILED_CODE: "ERR_COURSE_HIERARCHY_FAILED",
+        FAILED_MESSAGE: "Get course hierarchy failed"
+    },
 
     MIME_TYPE: "application/vnd.ekstep.content-collection",
     CONTENT_TYPE: "Collection"

@@ -183,7 +183,7 @@ function createCourseAPI(req, response) {
 function updateCourseAPI(req, response) {
 
     var data = req.body;
-    data.contentId = req.params.contentId;
+    data.courseId = req.params.courseId;
 
     var rspObj = req.rspObj;
 
@@ -203,7 +203,7 @@ function updateCourseAPI(req, response) {
     async.waterfall([
 
         function(CBW) {
-            ekStepUtil.updateContent(ekStepData, data.contentId, function(err, res) {
+            ekStepUtil.updateContent(ekStepData, data.courseId, function(err, res) {
                 if (err || res.responseCode !== responseCode.SUCCESS) {
                     rspObj.errCode = courseMessage.UPDATE.FAILED_CODE;
                     rspObj.errMsg = courseMessage.UPDATE.FAILED_MESSAGE;
@@ -237,13 +237,13 @@ function reviewCourseAPI(req, response) {
     };
     var rspObj = req.rspObj;
 
-    data.contentId = req.params.contentId;
+    data.courseId = req.params.courseId;
     var ekStepData = { request: data.request };
 
     async.waterfall([
 
         function(CBW) {
-            ekStepUtil.reviewContent(ekStepData, data.contentId, function(err, res) {
+            ekStepUtil.reviewContent(ekStepData, data.courseId, function(err, res) {
                 if (err || res.responseCode !== responseCode.SUCCESS) {
                     rspObj.errCode = courseMessage.REVIEW.FAILED_CODE;
                     rspObj.errMsg = courseMessage.REVIEW.FAILED_MESSAGE;
@@ -273,14 +273,14 @@ function reviewCourseAPI(req, response) {
 function publishCourseAPI(req, response) {
 
     var data = {};
-    data.contentId = req.params.contentId;
+    data.courseId = req.params.courseId;
 
     var rspObj = req.rspObj;
 
     async.waterfall([
 
         function(CBW) {
-            ekStepUtil.publishContent(data.contentId, function(err, res) {
+            ekStepUtil.publishContent(data.courseId, function(err, res) {
                 if (err || res.responseCode !== responseCode.SUCCESS) {
                     rspObj.errCode = courseMessage.PUBLISH.FAILED_CODE;
                     rspObj.errMsg = courseMessage.PUBLISH.FAILED_MESSAGE;
@@ -314,9 +314,9 @@ function getCourseAPI(req, response) {
     var rspObj = req.rspObj;
 
     data.body = req.body;
-    data.contentId = req.params.contentId;
+    data.courseId = req.params.courseId;
 
-    if (!data.contentId) {
+    if (!data.courseId) {
         rspObj.errCode = courseMessage.GET.FAILED_CODE;
         rspObj.errMsg = courseMessage.GET.FAILED_MESSAGE;
         rspObj.responseCode = responseCode.CLIENT_ERROR;
@@ -326,7 +326,7 @@ function getCourseAPI(req, response) {
     async.waterfall([
 
         function(CBW) {
-            ekStepUtil.getContent(data.contentId, function(err, res) {
+            ekStepUtil.getContent(data.courseId, function(err, res) {
                 if (err || res.responseCode !== responseCode.SUCCESS) {
                     rspObj.errCode = courseMessage.GET.FAILED_CODE;
                     rspObj.errMsg = courseMessage.GET.FAILED_MESSAGE;
@@ -390,6 +390,50 @@ function getMyCourseAPI(req, response) {
     ]);
 }
 
+/**
+ * this function helps to get course of user
+ * @param {Object} req
+ * @param {Object} response
+ * @returns {Object} object with error or success response with http status code
+ */
+function getCourseHierarchyAPI(req, response) {
+
+    var data = {};
+    var rspObj = req.rspObj;
+
+    data.body = req.body;
+    data.courseId = req.params.courseId;
+
+    if (!data.courseId) {
+        rspObj.errCode = courseMessage.HIERARCHY.FAILED_CODE;
+        rspObj.errMsg = courseMessage.HIERARCHY.FAILED_MESSAGE;
+        rspObj.responseCode = responseCode.CLIENT_ERROR;
+        response.status(400).send(respUtil.errorResponse(rspObj));
+    }
+
+    async.waterfall([
+
+        function(CBW) {
+            ekStepUtil.contentHierarchy(data.courseId, function(err, res) {
+                if (err || res.responseCode !== responseCode.SUCCESS) {
+                    rspObj.errCode = courseMessage.HIERARCHY.FAILED_CODE;
+                    rspObj.errMsg = courseMessage.HIERARCHY.FAILED_MESSAGE;
+                    rspObj.responseCode = res.responseCode;
+                    var httpStatus = res.statusCode || 400;
+                    return response.status(httpStatus).send(respUtil.errorResponse(rspObj));
+                } else {
+                    CBW(null, res);
+                }
+            });
+        },
+
+        function(res) {
+            rspObj.result = res.result;
+            return response.status(200).send(respUtil.successResponse(rspObj));
+        }
+    ]);
+}
+
 
 module.exports.searchCourseAPI = searchCourseAPI;
 module.exports.createCourseAPI = createCourseAPI;
@@ -398,3 +442,4 @@ module.exports.reviewCourseAPI = reviewCourseAPI;
 module.exports.publishCourseAPI = publishCourseAPI;
 module.exports.getCourseAPI = getCourseAPI;
 module.exports.getMyCourseAPI = getMyCourseAPI;
+module.exports.getCourseHierarchyAPI = getCourseHierarchyAPI;

@@ -25,6 +25,7 @@ getConfig = function (configuration_name) {
         EKSTEP_LIST_CONTENT_URI: "/v2/content/list",
         EKSTEP_RETIRE_CONTENT_URI: "/v2/content",
         EKSTEP_UPLOAD_CONTENT_URI:"/v2/content/upload",
+        EKSTEP_HIERARCHY_CONTENT_URI:"/v3/content/hierarchy",
         
         //Micro Service configuration for Course and Content service
         PREFIX_CODE : 'org.sunbird.'
@@ -36,6 +37,3 @@ getConfig = function (configuration_name) {
 module.exports = {
     getConfig: getConfig
 };
-
-
-
