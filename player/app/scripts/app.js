@@ -24,6 +24,10 @@ angular
         templateUrl: 'views/about.html',
         controller: 'AboutCtrl',
         controllerAs: 'about'
+      }).when('/search', {
+        templateUrl: 'views/content/search.html',
+        controller: 'ContentCtrl',
+        controllerAs: 'content'
       })
       .otherwise({
         redirectTo: '/'
