@@ -1,0 +1,43 @@
+<script type="text/ng-template" id="nodes_renderer.html">
+    <div  class="tree-node tree-node-content">
+    <a class="ui green icon button" ng-if="node.children && node.children.length > 0" data-nodrag ng-click="toggle(this)">
+    <i class="dropdown icon"
+    ng-class="{
+    'accordion angle right icon': collapsed,
+    'accordion  angle down icon': !collapsed
+    }">
+    </i>
+    </a>
+
+    <span>{{node.name}}</span>
+    <a class="ui red icon button" style="margin-top:5px;" data-nodrag ng-click="course.remove(this)">
+    <i class="remove icon"></i>
+    </a>
+    <a class="ui blue icon button" style="margin-top:5px;" data-nodrag ng-click="course.newSubItem(this)" style="margin-right: 8px;">
+    <i class="plus icon"></i>
+    </a>
+    </div>
+    <ol ui-tree-nodes="" ng-model="node.children" ng-class="{hidden: collapsed}">
+    <li ng-repeat="node in node.children" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+    </ol>
+</script>
+
+<div class="ui stackable two column grid full-height">
+
+    <div class="three wide column toc-tree-container">
+        <div class="ui header content toc-tree-header" ng-cloak>{{ course.data.name}}</div>
+
+        <div class="row">
+            <div>
+                <div ui-tree id="tree-root">
+                    <ol ui-tree-nodes ng-model="course.data.children">
+                        <li ng-repeat="node in course.data.children" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+                    </ol>
+                </div>
+            </div>
+        </div> 
+    </div>
+    <div class="eight wide column" ng-show="showSearchTemplate">
+        <div ng-include=" 'views/common/contentSearchTemplate.html'"></div>
+    </div>
+</div>

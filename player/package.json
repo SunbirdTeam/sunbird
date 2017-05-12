@@ -25,6 +25,7 @@
     "jasmine-core": "^2.6.1",
     "jshint-stylish": "^1.0.0",
     "karma": "^1.7.0",
+    "karma-coverage": "^1.1.1",
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.4",
     "lazypipe": "^0.2.4",

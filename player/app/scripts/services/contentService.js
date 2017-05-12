@@ -10,13 +10,13 @@
 angular.module('playerApp')
         .service('contentService', function (httpService, playerConstants) {
             
-            function getSearchContent(req){
+            function search(req){
                 var url = playerConstants.URL.BASE + playerConstants.URL.CONTENT.SEARCH;
                 return httpService.postOperation(url, req);
             }
             
             return{
-                getSearchContent:getSearchContent
+                search:search
             };
 
         });

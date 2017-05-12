@@ -48,7 +48,7 @@ function searchContentAPI(req, response) {
 
     var data = req.body;
     var rspObj = req.rspObj;
-
+    
     if (!data.request || !data.request.filters) {
         rspObj.errCode = contentMessage.SEARCH.MISSING_CODE;
         rspObj.errMsg = contentMessage.SEARCH.MISSING_MESSAGE;
