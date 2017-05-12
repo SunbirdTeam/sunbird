@@ -2,18 +2,18 @@
 
 /**
  * @ngdoc function
- * @name studioApp.controller:CourseCtrl
+ * @name studioApp.controller:ShowCourseCtrl
  * @description
- * # CourseCtrl
+ * # ShowCourseCtrl
  * Controller of the studioApp
  */
 angular.module('studioApp')
-        .controller('CourseCtrl', function (courseService, $log, $scope, contentService) {
+        .controller('ShowCourseCtrl', function (courseService, $log, $scope, contentService) {
             var vm = this;
             var reqForHierarchy = {
-                courseId: "do_11219206596520345611"
+                courseId: courseService.getCourseId()
             };
-            vm.name = "Content";
+            console.log(courseService.getCourseId());
 
             courseService.getHierarchy(reqForHierarchy).then(function (res) {
                 if (res.responseCode === "OK") {
@@ -36,9 +36,6 @@ angular.module('studioApp')
                 vm.data.splice(0, 0, a);
             };
 
-            function searchContent(request) {
-
-            }
             vm.newSubItem = function (scope) {
                 $scope.showSearchTemplate = true;
 

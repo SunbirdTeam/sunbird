@@ -9,6 +9,17 @@
  */
 angular.module('studioApp')
         .service('courseService', function (httpService, studioConstant) {
+            
+            var courseId = '';
+    
+            function setCouserId() {
+                this.courseId = courseId;
+                return;
+            }
+            
+            function getCouserId() {
+                return this.courseId;
+            }
 
             // This function is used to save time spend on project.
             function getHierarchy(req) {
@@ -27,6 +38,8 @@ angular.module('studioApp')
             }
             
             return{
+                setCourseId: setCouserId,
+                getCourseId: getCouserId,
                 getHierarchy: getHierarchy,
                 getMyCourse: getMyCourse,
                 searchCourse: searchCourse

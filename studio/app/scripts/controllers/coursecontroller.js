@@ -2,14 +2,15 @@
 
 /**
  * @ngdoc function
- * @name studioApp.controller:ShowAllCourseCtrl
+ * @name studioApp.controller:CourseCtrl
  * @description
- * # ShowAllCourseCtrl
+ * # CourseCtrl
  * Controller of the studioApp
  */
 angular.module('studioApp')
-        .controller('ShowAllCourseCtrl', function ($location, courseService, $log, $scope) {
+        .controller('CourseCtrl', function ($location, courseService, $log, $scope) {
 
+            console.log("CourseCtrl");
             var vm = this;
 
             vm.addCourse = function () {
@@ -26,10 +27,7 @@ angular.module('studioApp')
                 vm.currentCourseList = 0;
                 courseService.searchCourse(request).then(function (response) {
                     if (response.responseCode === "OK" && response.result.count > 0) {
-                        console.log("Live Course", response);
-//                        $scope.safeApply(function () {
-                            vm.currentCourseList = response.result.course;
-//                        });
+                        vm.currentCourseList = response.result.course;
                     }
                 }), function (errorMessage) {
                     $log.warn(errorMessage);
@@ -48,18 +46,15 @@ angular.module('studioApp')
                 vm.draftCourseLists = 0;
                 courseService.searchCourse(request).then(function (response) {
                     if (response.responseCode === "OK" && response.result.count > 0) {
-                        console.log("Draft Course", response);
-//                        $scope.safeApply(function () {
-                            vm.draftCourseList = response.result.course;
-//                        });
+                        vm.draftCourseList = response.result.course;
                     }
                 }), function (errorMessage) {
                     $log.warn(errorMessage);
                 };
             };
-            
-            vm.showCourse = function(courseId) {
-                
-                console.log(courseId);
+
+            vm.showCourse = function (courseId) {
+                courseService.setCourseId(courseId);
+                $location.path("/updateCourse");
             };
         });

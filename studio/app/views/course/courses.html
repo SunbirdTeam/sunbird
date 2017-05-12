@@ -1,4 +1,4 @@
-<div class="ui grid header" ng-init="showAllCourse.getCurrentCourse();showAllCourse.getDraftCourse();">
+<div class="ui grid header" ng-init="courses.getCurrentCourse();courses.getDraftCourse();">
     <div class="row container">
         <div class="one wide column">
 
@@ -19,32 +19,65 @@
             <div class="ui padding-10">
                 <span class="ui left floated">COURSES </span>
                 <span >
-                    <button class="ui right floated large primary button" type="button" ng-click="showAllCourse.addCourse()">Add Course</button> 
+                    <button class="ui right floated large primary button" type="button" ng-click="course.addCourse()">Add Course</button> 
                 </span>
             </div>
             <div class="header-border"></div>
-            <div ng-show="showAllCourse.currentCourseList.length > 0">
+            <div ng-show="courses.currentCourseList.length > 0">
                 <div class="ui padding-10">
                     <span class="ui left floated">CURRENT COURSE</span>
                 </div>
-                <div ng-repeat=" course in showAllCourse.currentCourseList track by $index">
+                <div ng-repeat=" course in courses.currentCourseList track by $index">
                     <div class="header-border"></div>
-                    <div class="ui">
-                        <span class="ui image cirular tini"><img src="images/hunderdPImage.png"></span>
-                        <span ng-click="showAllCourse.showCourse(course.IL_UNIQUE_ID)">{{course.name}}</span>
+                    <div class="ui grid row padding-10">
+                        <div class="ui grid five wide column">
+                            <div ng-if="course.appIcon" class="ui image cirular tiny">
+                                <i><img ng-src="{{course.appIcon}}"></i>
+                            </div>
+                            <div ng-if="!course.appIcon" class="ui image cirular tiny">
+                                <img src="images/logo.png">
+                            </div>
+                            <span ng-click="courses.showCourse(course.IL_UNIQUE_ID)" floated left>{{course.name}}</span>
+                        </div>
+                        <div class="ui grid seven wide column">
+                            <span>{{course.contentType}} |
+                                <span>{{course.language| arrayToString}}</span>
+                                <span ng-if="course.concepts">| {{course.concepts}} </span>
+                            </span>
+                            <span class="ui large transparent floated right">
+                                <i class="write circular icon"></i>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="header-border"></div>
-            <div ng-show="showAllCourse.draftCourseList.length > 0">
+            <div ng-show="courses.draftCourseList.length > 0">
                 <div class="ui padding-10">
                     <span class="ui left floated">DRAFT COURSES </span>
                 </div>
-                <div ng-repeat=" course in showAllCourse.draftCourseList track by $index">
+                <div ng-repeat=" course in courses.draftCourseList track by $index">
                     <div class="header-border"></div>
-                    <div class="ui">
-                        <span class="ui image cirular tini"><img src="images/hunderdPImage.png"></span>
-                        <span ng-click="showAllCourse.showCourse(course.IL_UNIQUE_ID)">{{course.name}}</span>
+                    <div class="ui grid row padding-10">
+                        <div class="ui grid five wide column">
+                            <div ng-if="course.appIcon" class="ui image cirular tiny">
+                                <i><img ng-src="{{course.appIcon}}"></i>
+                            </div>
+                            <div ng-if="!course.appIcon" class="ui image cirular tiny">
+                                <img src="images/logo.png">
+                            </div>
+                            <span ng-click="courses.showCourse(course.IL_UNIQUE_ID)" floated left>{{course.name}}</span>
+                        </div>
+                        <div class="ui grid seven wide column">
+                            <span>{{course.contentType}} |
+                                <span>{{course.language| arrayToString}}</span>
+                                <span ng-if="course.concepts">| {{course.concepts}} </span>
+                            </span>
+                            <span class="ui large transparent floated right">
+                                <i class="write circular icon"></i>
+                            </span>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>

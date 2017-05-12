@@ -14,7 +14,7 @@
         <div class="ui three stackable cards course-cards" ng-show="contentList.length > 0">
             <div class="ui link card" ng-repeat=" content in contentList track by $index" ng-init="$last && loadRating()">
                 <div class="ui content">
-                    <h4 class="ui header">{{content.name| limitTo:70}}<span ng-if="content.name.length > 70">...</span></h4>
+                    <h4 class="ui header" title="{{content.name}}">{{content.name| limitTo:20}}<span ng-if="content.name.length > 20">...</span></h4>
                     <span class="stackable two column grid">
                         <span class="four wide column"> {{content.contentType}}</span>
                     <span>|</span>
@@ -40,7 +40,7 @@
                         <span class="ui large transparent left icon">
                             <i class="user circular icon"></i>
                         </span>
-                        <span>{{content.owner}}</span>
+                        <span>{{content.owner | limitTo:20}}<span ng-if="content.owner.length>20">...</span></span>
                         <button class="ui right floated large primary button" type="button" name="Add" ng-click="addContent(content)">Add</button>
                     </div>
                 </div>
