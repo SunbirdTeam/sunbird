@@ -51,7 +51,7 @@ exports.COURSE = {
     },
 
     MIME_TYPE: "application/vnd.ekstep.content-collection",
-    CONTENT_TYPE: "Collection"
+    CONTENT_TYPE: "TextBook"
 };
 
 exports.CONTENT = {
@@ -113,12 +113,11 @@ exports.CONTENT = {
         "Simulation",
         "Puzzle",
         "Diagnostic",
-        "Asset",
         "Template",
         "Plugin",
         "ContentTemplate",
         "ItemTemplate",
-        "TextBook",
+        "Collection",
         "TextBookUnit"
     ],
 

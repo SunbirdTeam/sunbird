@@ -118,6 +118,7 @@ function searchCourseAPI(req, response) {
         },
 
         function(res) {
+            console.log(res.result);
             rspObj.result = transformResBody(res.result, 'content', 'course');
             return response.status(200).send(respUtil.successResponse(rspObj));
         }
@@ -384,7 +385,11 @@ function getMyCourseAPI(req, response) {
         },
 
         function(res) {
-            rspObj.result = transformResBody(res.result, 'content', 'course');
+            rspObj.result.count = res.count;
+            if(res.result) {
+                rspObj.result = transformResBody(res.result, 'content', 'course');
+            }
+            
             return response.status(200).send(respUtil.successResponse(rspObj));
         }
     ]);

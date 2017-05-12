@@ -13,7 +13,7 @@ angular.module('studioApp')
             var vm = this;
 
             vm.addCourse = function () {
-                $location.path("/addCourse");
+                $state.go("addCourse");
             };
 
             vm.getCurrentCourse = function () {
