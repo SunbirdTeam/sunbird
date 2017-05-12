@@ -15,9 +15,21 @@ angular.module('studioApp')
                 var url = studioConstant.URL.BASE + studioConstant.URL.COURSE.HIERARCHY + '/' + req.courseId;
                 return httpService.getOperation(url, req);
             }
+
+            function getMyCourse(req) {
+                var url = studioConstant.URL.BASE + studioConstant.URL.COURSE.GET_MY_COURSE + '/' + req.createdBy;
+                return httpService.getOperation(url, req);
+            }
+            
+            function searchCourse(req) {
+                var url = studioConstant.URL.BASE + studioConstant.URL.COURSE.SEARCH;
+                return httpService.postOperation(url, req);
+            }
             
             return{
-                getHierarchy: getHierarchy
+                getHierarchy: getHierarchy,
+                getMyCourse: getMyCourse,
+                searchCourse: searchCourse
             };
 
         });
