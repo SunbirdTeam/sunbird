@@ -17,9 +17,8 @@
                     <h4 class="ui header">{{content.name| limitTo:70}}<span ng-if="content.name.length > 70">...</span></h4>
                     <span class="stackable two column grid">
                         <span class="four wide column"> {{content.contentType}}</span>
-                        <span>|</span>
-                        <span class="four wide column"> {{content.status}}</span>
-
+                    <span>|</span>
+                    <span class="four wide column"> {{content.status}}</span>
                     </span>
                 </div>
                 <div ng-if="content.appIcon" class="ui image">
@@ -34,7 +33,6 @@
                 </div>
                 <div class="ui content">
                     <div><span>{{(content.description| limitTo:100) || "No Description"}}</span><span ng-if="content.description.length > 100">...</span></div>
-
                 </div>
                 <div class="ui extra content">
                     <span class="ui row">Last updated on: {{content.lastUpdatedOn| dateFilter}}</span>
@@ -44,7 +42,6 @@
                         </span>
                         <span>{{content.owner}}</span>
                         <button class="ui right floated large primary button" type="button" name="Add" ng-click="addContent(content)">Add</button>
-
                     </div>
                 </div>
             </div>
@@ -53,10 +50,13 @@
             <p>No Content found.</p>
         </div>
     </div>
-    <div class="ui segment" ng-if="!contentList && !showNoContentFound">
-        <div class="ui active inverted dimmer">
-            <div class="ui medium text loader">Loading</div>
+    <div class="ui huge icon message" ng-if="!contentList && !showNoContentFound">
+        <i class="notched circle loading icon"></i>
+        <div class="content">
+            <div class="header">
+                Just one second
+            </div>
+            <p>We're fetching that content for you.</p>
         </div>
-        <p></p>
     </div>
 </div>
