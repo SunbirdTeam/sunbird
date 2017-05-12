@@ -8,10 +8,10 @@
     </i>
         </a>
         <h4 style="display: inline;">{{node.name}}</h4>
-        <a data-nodrag ng-click="course.remove(this)">
+        <a data-nodrag ng-click="showCourse.remove(this)">
             <i class="remove large grey link icon"></i>
         </a>
-        <a data-nodrag ng-click="course.newSubItem(this)">
+        <a data-nodrag ng-click="showCourse.newSubItem(this)">
             <i class="plus large grey link icon"></i>
         </a>
     </div>
@@ -19,20 +19,20 @@
         <li ng-repeat="node in node.children" ui-tree-node ng-include="'nodes_renderer.html'"></li>
     </ol>
 </script>
-<div class="ui stackable two column grid full-height">
+<div class="ui stackable two column grid full-height" ng-init="showCourse.onInit()">
     <div class="three wide column toc-tree-container">
-        <h1 class="ui header content toc-tree-header" ng-cloak>{{ course.data.name}}</h1>
+        <h1 class="ui header content toc-tree-header" ng-cloak>{{ showCourse.data.name}}</h1>
         <div class="row">
             <div>
                 <div ui-tree id="tree-root">
-                    <ol ui-tree-nodes ng-model="course.data.children">
-                        <li ng-repeat="node in course.data.children" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+                    <ol ui-tree-nodes ng-model="showCourse.data.children">
+                        <li ng-repeat="node in showCourse.data.children" ui-tree-node ng-include="'nodes_renderer.html'"></li>
                     </ol>
                 </div>
             </div>
         </div>
     </div>
-    <div class="eight wide column" ng-show="showSearchTemplate">
+    <div class="eight wide column" ng-if="showSearchTemplate">
         <div ng-include=" 'views/common/contentSearchTemplate.html'"></div>
     </div>
 </div>

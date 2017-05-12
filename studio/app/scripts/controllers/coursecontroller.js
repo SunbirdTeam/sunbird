@@ -8,9 +8,8 @@
  * Controller of the studioApp
  */
 angular.module('studioApp')
-        .controller('CourseCtrl', function ($location, courseService, $log, $scope) {
+        .controller('CourseCtrl', function ($location, courseService, $log, $scope, $state) {
 
-            console.log("CourseCtrl");
             var vm = this;
 
             vm.addCourse = function () {
@@ -53,8 +52,8 @@ angular.module('studioApp')
                 };
             };
 
-            vm.showCourse = function (courseId) {
-                courseService.setCourseId(courseId);
-                $location.path("/updateCourse");
-            };
+//            vm.showCourse = function (courseId) {
+//                courseService.setCourseId(courseId);
+//                $state.go('showCourse')
+//            };
         });

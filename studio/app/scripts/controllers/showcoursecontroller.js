@@ -8,19 +8,22 @@
  * Controller of the studioApp
  */
 angular.module('studioApp')
-        .controller('ShowCourseCtrl', function (courseService, $log, $scope, contentService) {
-            var vm = this;
-            var reqForHierarchy = {
-                courseId: courseService.getCourseId()
-            };
-            console.log(courseService.getCourseId());
+        .controller('ShowCourseCtrl', function (courseService, $log, $scope, contentService, $stateParams) {
 
-            courseService.getHierarchy(reqForHierarchy).then(function (res) {
-                if (res.responseCode === "OK") {
-                    vm.data = res.result.content;
-                }
-            }), function (errorMessage) {
-                $log.warn(errorMessage);
+            var vm = this;
+
+            vm.onInit = function () {
+                var reqForHierarchy = {
+                    courseId: $stateParams.courseId
+                };
+
+                courseService.getHierarchy(reqForHierarchy).then(function (res) {
+                    if (res.responseCode === "OK") {
+                        vm.data = res.result.content;
+                    }
+                }), function (errorMessage) {
+                    $log.warn(errorMessage);
+                };
             };
 
             vm.remove = function (scope) {
@@ -42,7 +45,7 @@ angular.module('studioApp')
                 vm.addScope = scope;
                 var request = {
                     filters: {},
-                    limit : 30
+                    limit: 30
                 };
                 $scope.contentList = 0;
                 contentService.search(request).then(function (response) {
@@ -57,11 +60,11 @@ angular.module('studioApp')
             };
 
             $scope.getContent = function (query) {
-                
+
                 var request = {
                     filters: {},
-                    query : query
-                };  
+                    query: query
+                };
                 $scope.contentList = 0;
                 contentService.search(request).then(function (response) {
                     if (response.responseCode === "OK" && response.result.count > 0) {
@@ -73,9 +76,9 @@ angular.module('studioApp')
                     $log.warn(errorMessage);
                 };
             };
-            
-            $scope.addContent = function(data) {
-                
+
+            $scope.addContent = function (data) {
+
                 var nodeData = vm.addScope.$modelValue;
 //                data.id = nodeData.id * 10 + nodeData.children.length;
                 data.children = [];

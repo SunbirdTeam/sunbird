@@ -28,14 +28,14 @@ angular
         controller: 'CourseCtrl',
         controllerAs: 'courses'
       })
-      .state('addCourse', {
+      .state('course.add', {
         url: '/course/add',
         templateUrl: 'views/course/create.html',
         controller: 'CreateCourseCtrl',
         controllerAs: 'createCourse'
       })
-      .state('showCourse', {
-        url: "course/show",
+      .state('courseShow', {
+        url: "/course/show/:courseId",
         templateUrl: 'views/course/show.html',
         controller: 'ShowCourseCtrl',
         controllerAs: 'showCourse'

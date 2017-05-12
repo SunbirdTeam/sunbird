@@ -37,15 +37,16 @@
                             <div ng-if="!course.appIcon" class="ui image cirular tiny">
                                 <img src="images/logo.png">
                             </div>
-                            <span ng-click="courses.showCourse(course.IL_UNIQUE_ID)" floated left>{{course.name}}</span>
+                            <span>{{course.name}}</span>
                         </div>
                         <div class="ui grid seven wide column">
                             <span>{{course.contentType}} |
                                 <span>{{course.language| arrayToString}}</span>
                                 <span ng-if="course.concepts">| {{course.concepts}} </span>
                             </span>
-                            <span class="ui large transparent floated right">
-                                <i class="write circular icon"></i>
+                            <span class="ui large transparent floated right" ui-sref="courseShow({courseId : course.IL_UNIQUE_ID})">
+                                <i class="write circular icon">
+                                </i>
                             </span>
                         </div>
                     </div>
@@ -66,25 +67,23 @@
                             <div ng-if="!course.appIcon" class="ui image cirular tiny">
                                 <img src="images/logo.png">
                             </div>
-                            <span ng-click="courses.showCourse(course.IL_UNIQUE_ID)" floated left>{{course.name}}</span>
+                            <span>{{course.name}}</span>
                         </div>
                         <div class="ui grid seven wide column">
                             <span>{{course.contentType}} |
                                 <span>{{course.language| arrayToString}}</span>
                                 <span ng-if="course.concepts">| {{course.concepts}} </span>
                             </span>
-                            <span class="ui large transparent floated right">
-                                <i class="write circular icon"></i>
+                            <span class="ui large transparent floated right" ui-sref="courseShow({courseId : course.IL_UNIQUE_ID})">
+                                <i class="write circular icon">
+                                </i>
                             </span>
                         </div>
                     </div>
-                    </div>
                 </div>
             </div>
-            <div class="header-border"></div>
         </div>
-        <div class="one wide column floated right verticalLine">
-
-        </div>
+        <div class="header-border"></div>
     </div>
+    <div class="one wide column floated right verticalLine"></div>
 </div>
